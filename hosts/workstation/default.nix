@@ -14,10 +14,12 @@
     self.nixosModules.hardware-amd-gpu
     self.nixosModules.hardware-common
     self.nixosModules.locale-en-us
-    ./realtek-r8168
   ];
 
   boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" "r8169"];
+  boot.extraModulePackages = with config.boot.kernelPackages; [ r8125 ];
+  boot.kernelModules = [ "r8125" ];
+  boot.blacklistedKernelModules = [ "r8169" ];
 
   environment = {
     systemPackages = with pkgs; [heroic];
