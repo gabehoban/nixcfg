@@ -1,30 +1,25 @@
 # Custom desktop with AMD Ryzen 5 2600, 16GB RAM, AMD Rx 6700, and 1TB SSD + 2TB HDD.
 {
-  config,
-  pkgs,
   self,
+  config,
   ...
 }: {
   imports = [
     ./disko.nix
     ./home.nix
-    # ./secrets.nix
+    ./secrets.nix
     ./stylix.nix
+    ./realtek-r8125
     self.nixosModules.hardware-amd-cpu
     self.nixosModules.hardware-amd-gpu
     self.nixosModules.hardware-common
     self.nixosModules.locale-en-us
   ];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" "r8169"];
-  boot.extraModulePackages = with config.boot.kernelPackages; [ r8125 ];
-  boot.kernelModules = [ "r8125" ];
-  boot.blacklistedKernelModules = [ "r8169" ];
+  boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usbhid" "sd_mod"];
+  boot.blacklistedKernelModules = ["r8169"];
 
-  environment = {
-    systemPackages = with pkgs; [heroic];
-    variables.GDK_SCALE = "1.0";
-  };
+  environment.variables.GDK_SCALE = "1.0";
 
   networking.hostName = "workstation";
 
@@ -45,6 +40,12 @@
 
       rocmOverrideGfx = "10.3.0";
     };
+  };
+
+  fileSystems."/games" = {
+    device = "/dev/disk/by-id/nvme-WD_BLACK_SN850X_1000GB_232758800485-part1";
+    options = ["compress=zstd" "noatime"];
+    fsType = "btrfs";
   };
 
   system.stateVersion = "24.05";
@@ -75,15 +76,6 @@
         enable = true;
         autologin = "gabehoban";
       };
-
-      # syncthing = {
-      #   enable = true;
-      #   certFile = config.age.secrets.syncthingCert.path;
-      #   keyFile = config.age.secrets.syncthingKey.path;
-      #   syncMusic = true;
-      #   syncROMs = true;
-      #   user = "gabehoban";
-      # };
     };
   };
 

@@ -1,2 +1,2 @@
 # Default overlay.
-{self, ...}: final: prev: { }
+{self, ...}: final: prev: {}

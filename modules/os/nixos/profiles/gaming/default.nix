@@ -8,6 +8,7 @@
 
   config = lib.mkIf config.myNixOS.profiles.gaming.enable {
     environment.systemPackages = with pkgs; [
+      ckan
       dualsensectl
       moonlight-qt
       trigger-control

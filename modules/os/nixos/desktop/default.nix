@@ -15,6 +15,12 @@
   };
 
   config = lib.mkIf config.myNixOS.desktop.enable {
+    nixpkgs.config.allowUnfreePredicate = pkg:
+      builtins.elem (lib.getName pkg) [
+        "1password-gui"
+        "1password"
+      ];
+
     boot = {
       consoleLogLevel = 0;
       initrd.verbose = false;
@@ -30,6 +36,11 @@
     ];
 
     programs.system-config-printer.enable = true;
+    programs._1password.enable = true;
+    programs._1password-gui = {
+      enable = true;
+      polkitPolicyOwners = ["gabehoban"];
+    };
 
     services = {
       gnome.gnome-keyring.enable = true;

@@ -1,10 +1,5 @@
-{...}: {
+{pkgs, ...}: {
   config = {
-    environment.variables = {
-      DPAU_DRIVER = "radeonsi";
-      GSK_RENDERER = "ngl";
-    };
-
     hardware = {
       amdgpu = {
         initrd.enable = true;
@@ -19,5 +14,8 @@
 
       graphics.enable = true;
     };
+    systemd.tmpfiles.rules = [
+      "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+    ];
   };
 }

@@ -22,24 +22,13 @@ in {
             id = 2;
             name = "Private";
           };
-
-          atolls = {
-            color = "blue";
-            icon = "briefcase";
-            id = 3;
-            name = "Atolls";
-          };
         };
 
         extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
           augmented-steam
-          bitwarden
           clearurls
           consent-o-matic
-          raindropio
-          simple-tab-groups
           ublock-origin
-          zoom-redirector
         ];
 
         id = 0;
@@ -68,9 +57,6 @@ in {
           (import ./betterfox.nix)
           // {
             "browser.toolbars.bookmarks.visibility" = "newtab";
-            # "services.sync.prefs.sync.browser.uiCustomization.state" = true;
-            "sidebar.revamp" = true;
-            "sidebar.verticalTabs" = true;
             "svg.context-properties.content.enabled" = true;
           };
       };

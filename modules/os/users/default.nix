@@ -16,16 +16,16 @@
       defaultUserShell = pkgs.zsh;
       mutableUsers = false;
 
-      # users.root.openssh.authorizedKeys = {
-      #   keyFiles =
-      #     lib.map (file: ../../../secrets/publicKeys + "/${file}")
-      #     (lib.filter (file: lib.hasPrefix "gabehoban_" file)
-      #       (builtins.attrNames (builtins.readDir ../../../secrets/publicKeys)));
+      users.root.openssh.authorizedKeys = {
+        keyFiles =
+          lib.map (file: ../../../secrets/publicKeys + "/${file}")
+          (lib.filter (file: lib.hasPrefix "gabehoban_" file)
+            (builtins.attrNames (builtins.readDir ../../../secrets/publicKeys)));
 
-      #   keys = [
-      #     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGcJBb7+ZxkDdk06A0csNsbgT9kARUN185M8k3Lq7E/d u0_a336@localhost"
-      #   ];
-      # };
+        keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIRRxQWNCBRXazO9PRQeK24woXB7jrsYUVJgHdvovVbW"
+        ];
+      };
     };
   };
 }

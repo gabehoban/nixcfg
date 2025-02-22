@@ -174,7 +174,6 @@
 
   ## THEME ADJUSTMENTS
   "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-  "browser.compactmode.show" = true;
   "browser.privateWindowSeparation.enabled" = false; # WINDOWS
 
   ## COOKIE BANNER HANDLING
