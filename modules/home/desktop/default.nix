@@ -1,0 +1,72 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./gnome
+  ];
+
+  options.myHome.desktop.enable = lib.mkOption {
+    default = config.myHome.desktop.gnome.enable or config.myHome.desktop.hyprland.enable or config.myHome.desktop.kde.enable;
+    description = "Desktop environment configuration.";
+    type = lib.types.bool;
+  };
+
+  config = lib.mkIf config.myHome.desktop.enable {
+    home.packages = [
+      pkgs.adwaita-icon-theme
+      pkgs.liberation_ttf
+    ];
+
+    dconf = {
+      enable = true;
+
+      settings = {
+        "org/gnome/nm-applet".disable-connected-notifications = true;
+        "org/gtk/gtk4/settings/file-chooser".sort-directories-first = true;
+        "org/gtk/settings/file-chooser".sort-directories-first = true;
+      };
+    };
+
+    gtk.gtk3.bookmarks = [
+      "file://${config.xdg.userDirs.documents}"
+      "file://${config.xdg.userDirs.download}"
+      "file://${config.xdg.userDirs.music}"
+      "file://${config.xdg.userDirs.videos}"
+      "file://${config.xdg.userDirs.pictures}"
+      "file://${config.home.homeDirectory}/src"
+    ];
+
+    stylix = {
+      iconTheme = {
+        enable = true;
+        dark = "Papirus-Dark";
+        light = "Papirus";
+        package = pkgs.papirus-icon-theme.override {color = "adwaita";};
+      };
+
+      targets.gtk.extraCss = builtins.concatStringsSep "\n" [
+        (lib.optionalString (config.stylix.polarity == "light")
+          ''
+            tooltip {
+              &.background { background-color: alpha(${config.lib.stylix.colors.withHashtag.base05}, ${builtins.toString config.stylix.opacity.popups}); }
+              background-color: alpha(${config.lib.stylix.colors.withHashtag.base05}, ${builtins.toString config.stylix.opacity.popups});
+            }'')
+      ];
+    };
+
+    xdg.userDirs = {
+      enable = true;
+      createDirectories = true;
+      desktop = lib.mkDefault "${config.home.homeDirectory}/desktop";
+      documents = lib.mkDefault "${config.home.homeDirectory}/documents";
+      download = lib.mkDefault "${config.home.homeDirectory}/downloads";
+      extraConfig = {XDG_SRC_DIR = "${config.home.homeDirectory}/src";};
+      music = lib.mkDefault "${config.home.homeDirectory}/music";
+      pictures = lib.mkDefault "${config.home.homeDirectory}/pictures";
+      videos = lib.mkDefault "${config.home.homeDirectory}/videos";
+    };
+  };
+}
