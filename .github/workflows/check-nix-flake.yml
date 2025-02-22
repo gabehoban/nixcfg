@@ -1,0 +1,30 @@
+name: "check-nix-flake"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - ".github/**"
+      - "_img/**"
+  workflow_dispatch:
+jobs:
+  check-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          fetch-depth: 1
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Check formatting
+        run: nix fmt -- -c .
+  check-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          fetch-depth: 1
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Check flake evaluation
+        run: nix flake check

@@ -1,9 +1,5 @@
 # Custom desktop with AMD Ryzen 5 2600, 16GB RAM, AMD Rx 6700, and 1TB SSD + 2TB HDD.
-{
-  self,
-  config,
-  ...
-}: {
+{self, ...}: {
   imports = [
     ./disko.nix
     ./home.nix
