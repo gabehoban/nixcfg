@@ -31,11 +31,13 @@
 
         substituters = [
           "https://cache.nixos.org/"
+          "https://gabehoban.cachix.org"
           "https://chaotic-nyx.cachix.org/"
           "https://nix-community.cachix.org"
         ];
 
         trusted-public-keys = [
+          "gabehoban.cachix.org-1:8KJ3WRVyJGR7/Ghf1qol4pCqmmGuxNNpedDneyivky4="
           "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8"
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         ];

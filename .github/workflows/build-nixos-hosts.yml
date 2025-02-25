@@ -10,7 +10,7 @@ on:
       - "_img/**"
   workflow_dispatch:
 jobs:
-  build-fallarbor:
+  build-workstation:
     runs-on: ubuntu-latest
     steps:
       - name: Free Disk Space (Ubuntu)

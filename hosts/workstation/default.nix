@@ -1,5 +1,9 @@
 # Custom desktop with AMD Ryzen 5 2600, 16GB RAM, AMD Rx 6700, and 1TB SSD + 2TB HDD.
-{self, ...}: {
+{
+  self,
+  config,
+  ...
+}: {
   imports = [
     ./disko.nix
     ./home.nix
@@ -68,9 +72,11 @@
     };
 
     services = {
-      gdm = {
+      gdm.enable = true;
+
+      syncthing = {
         enable = true;
-        autologin = "gabehoban";
+        user = "gabehoban";
       };
     };
   };

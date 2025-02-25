@@ -14,6 +14,8 @@
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = lib.makeSearchPathOutput "steamcompattool" "" config.programs.steam.extraCompatPackages;
     };
 
+    environment.systemPackages = with pkgs; [cartridges];
+
     hardware.steam-hardware.enable = true;
 
     programs = {

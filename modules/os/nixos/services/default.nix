@@ -2,5 +2,6 @@
   imports = [
     ./gdm
     ./greetd
+    ./syncthing
   ];
 }
