@@ -27,10 +27,6 @@
     };
 
     # Application integrations
-    lix-module = {
-      url = "git+https://git.lix.systems/lix-project/nixos-module?ref=stable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -51,7 +47,6 @@
       nixpkgs,
       chaotic,
       home-manager,
-      lix-module,
       ...
     }@inputs:
     let
@@ -83,7 +78,6 @@
             (configLib.relativeToRoot "hosts/workstation")
             chaotic.nixosModules.default
             home-manager.nixosModules.home-manager
-            lix-module.nixosModules.default
           ];
         };
       };

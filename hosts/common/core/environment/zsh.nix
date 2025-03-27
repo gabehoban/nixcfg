@@ -122,6 +122,8 @@
         setopt auto_list        # List choices on ambiguous tab
         setopt auto_menu        # Use completion menu when requested
         setopt always_to_end    # Move cursor to end after completion
+
+        export GPG_TTY=`tty`
       '';
 
       # Early initialization (runs before plugins)
