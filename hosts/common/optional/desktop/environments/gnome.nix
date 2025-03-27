@@ -37,6 +37,16 @@
               "blur-my-shell@aunetx"
               "dash-to-dock@micxgx.gmail.com"
             ];
+            # Configure default applications that appear in the GNOME dock/favorites
+            # These will be displayed in the order listed below
+            favorite-apps = [
+              "org.gnome.Nautilus.desktop"
+              "firefox.desktop"
+              "steam.desktop"
+              "org.gnome.Console.desktop"
+              "org.gnome.Calendar.desktop"
+              "dev.zed.Zed.desktop"
+            ];
           };
 
           # Dash to Dock settings
