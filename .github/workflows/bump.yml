@@ -6,6 +6,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   get-flake-inputs:
     runs-on: ubuntu-latest
@@ -39,14 +43,12 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v16
         with:
           extra-conf: accept-flake-config = true
-      - run: git config --global user.email "45900957864+dev-baymax[bot]@users.noreply.github.com"
-      - run: git config --global user.name "dev-baymax[bot]"
       - uses: cpcloud/flake-update-action@v2.0.1
         with:
           dependency: ${{ matrix.flake }}
           pull-request-token: "${{ steps.app-token.outputs.token }}"
-          pull-request-author: dev-baymax[bot] <45900957864+dev-baymax[bot]@users.noreply.github.com>
+          pull-request-author: dev-baymax[bot] <dev-baymax[bot]@users.noreply.github.com>
           delete-branch: true
-          github-token: "${{ steps.app-token.outputs.token }}"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
           pull-request-branch-prefix: update-
           automerge: true
