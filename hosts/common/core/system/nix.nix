@@ -28,6 +28,12 @@
       # Store optimization
       auto-optimise-store = true; # Deduplicate and optimize nix store
 
+      # Required by Cachix to be used as non-root user
+      trusted-users = [
+        "root"
+        "gabehoban"
+      ];
+
       # Enable flakes and new CLI commands
       experimental-features = [
         "nix-command"
@@ -39,18 +45,18 @@
 
       # Binary caches for faster builds
       trusted-substituters = [
+        "https://cache.garnix.io"
         "https://cache.nixos.org/"
-        "https://nix-community.cachix.org"
-        "https://ai.cachix.org"
         "https://chaotic-nyx.cachix.org"
+        "https://nix-community.cachix.org"
       ];
 
       # Public keys for binary caches
       trusted-public-keys = [
+        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc="
         "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
     };
 

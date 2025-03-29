@@ -12,9 +12,8 @@
     # Hardware Configuration
     # ───────────────────────────────────────────
     # AMD CPU/GPU support
-    inputs.hardware.nixosModules.common-cpu-amd
-    inputs.hardware.nixosModules.common-gpu-amd
-    (configLib.relativeToRoot "hosts/common/optional/hardware/amd.nix")
+    (configLib.relativeToRoot "hosts/common/optional/hardware/cpu/amd.nix")
+    (configLib.relativeToRoot "hosts/common/optional/hardware/gpu/amd.nix")
 
     # Disk and local hardware configuration
     inputs.disko.nixosModules.disko

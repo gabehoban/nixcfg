@@ -1,15 +1,16 @@
-_: final: prev: 
+_: final: _prev:
 let
   # Import all custom packages from pkgs directory
   customPackages = import ../pkgs { pkgs = final; };
-in {
+in
+{
   # ==================== CUSTOM PACKAGES ====================
 
   # Make custom packages directly available in pkgs namespace
   inherit (customPackages) zsh-histdb-skim nixfmt-plus;
-  
+
   # Keep the customPackages attribute for reference
-  customPackages = customPackages;
+  inherit customPackages;
 
   # Individual package overrides
   # examplePackage = prev.examplePackage.override { ... };
