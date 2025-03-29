@@ -66,7 +66,8 @@
     # SCX scheduler for improved responsiveness
     scx = {
       enable = true;
-      scheduler = "scx_rusty";
+      scheduler = "scx_bpfland";
+      package = pkgs.scx.full;
     };
 
     # Ananicy for prioritizing processes
