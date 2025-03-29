@@ -4,41 +4,30 @@
   #
   # Steam configuration
   #
-  programs = {
-    steam = {
-      enable = true;
-
-      # Enable Gamescope Wayland session for better gaming performance
-      gamescopeSession.enable = true;
-
-      # Extra runtime libraries for Steam and games
-      extraPackages = with pkgs; [
-        # X11 libraries
-        xorg.libXcursor
-        xorg.libXi
-        xorg.libXinerama
-        xorg.libXScrnSaver
-
-        # Multimedia libraries
-        libpng
-        libpulseaudio
-        libvorbis
-
-        # System libraries
-        stdenv.cc.cc.lib
-        libkrb5
-        keyutils
-      ];
-    };
+  hardware.steam-hardware.enable = true;
+  programs.steam = {
+    enable = true;
+    package = pkgs.steam.override { privateTmp = false; };
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  #
-  # Additional gaming utilities
-  #
-  environment.systemPackages = with pkgs; [
-    protonup # Proton GE version manager
-    protontricks # Winetricks wrapper for Proton prefixes
-  ];
+  nixpkgs.config.packageOverrides = pkgs: {
+    steam = pkgs.steam.override {
+      extraPkgs =
+        pkgs: with pkgs; [
+          libgdiplus
+          libpng
+          libpulseaudio
+          libvorbis
+          xorg.libXcursor
+          xorg.libXi
+          xorg.libXinerama
+          xorg.libXScrnSaver
+        ];
+    };
+  };
 
   #
   # Persistent configuration

@@ -41,14 +41,18 @@ curl -L nix.norpie.dev | sh
 ### Steps
 
 1. Boot from a NixOS installation media
-2. Clone this repository:
+2. Install using disko:
    ```bash
-   git clone https://github.com/norpie/nixcfg.git
-   cd nixcfg
-   ```
-3. Install using disko:
-   ```bash
-   ./scripts/installation/install-with-disko workstation
+   # Partition and format disks
+   sudo nix run github:nix-community/disko \
+       --extra-experimental-features "nix-command flakes" \
+       --no-write-lock-file \
+       -- \
+       --mode zap_create_mount \
+       "hosts/${TARGET_HOST}/disks.nix"
+
+   # Install NixOS
+   sudo nixos-install --flake ".#${TARGET_HOST}"
    ```
 
 ## Usage

@@ -10,7 +10,6 @@
     # Framework & functionality modules
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     impermanence.url = "github:nix-community/impermanence";
-    sops-nix.url = "github:Mic92/sops-nix";
 
     # Extended modules (with nixpkgs follows)
     disko = {

@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
@@ -28,6 +29,7 @@
 
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [
       rocmPackages.clr.icd
       amdvlk
@@ -35,10 +37,6 @@
     extraPackages32 = with pkgs; [
       driversi686Linux.amdvlk
     ];
-  };
-
-  environment.sessionVariables = {
-    "LIBVA_DRIVER_NAME" = "radeonsi";
   };
 
   nixpkgs.config = {
@@ -50,16 +48,6 @@
     rocmPackages.rocminfo
     rocmPackages.rocm-smi
   ];
-
-  chaotic = {
-    mesa-git = {
-      enable = true;
-      extraPackages = [ pkgs.amdvlk ];
-      extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
-    };
-    nyx.cache.enable = true;
-  };
-
   systemd.services.lact = {
     description = "AMDGPU Control Daemon";
     after = [ "multi-user.target" ];
@@ -69,7 +57,4 @@
     };
     enable = true;
   };
-
-  hardware.amdgpu.initrd.enable = true;
-  programs.corectrl.gpuOverclock.ppfeaturemask = "0xffffffff";
 }
