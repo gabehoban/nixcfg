@@ -7,6 +7,6 @@
 }: {
   imports = [
     # Gaming applications
-    (configLib.moduleImport "applications/gaming/default.nix")
+    (configLib.moduleImport "applications/app-gaming.nix")
   ];
 }

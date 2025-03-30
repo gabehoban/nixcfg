@@ -9,11 +9,11 @@
   imports = [
     # Web browsers
     (configLib.profileImport "applications/browser.nix")
-    
+
     # System utilities
-    (configLib.moduleImport "applications/system/default.nix")
-    
+    (configLib.moduleImport "applications/app-1password.nix")
+
     # Development tools
-    (configLib.moduleImport "applications/development/default.nix")
+    (configLib.moduleImport "applications/app-zed.nix")
   ];
 }

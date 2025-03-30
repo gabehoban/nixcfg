@@ -7,8 +7,8 @@
 }: {
   imports = [
     # CPU and GPU modules
-    (configLib.moduleImport "hardware/cpu/amd.nix")
-    (configLib.moduleImport "hardware/gpu/amd.nix")
+    (configLib.moduleImport "hardware/hw-cpu-amd.nix")
+    (configLib.moduleImport "hardware/hw-gpu-amd.nix")
   ];
 
   # Enable AMD-specific firmware and drivers

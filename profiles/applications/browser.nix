@@ -7,6 +7,6 @@
 }: {
   imports = [
     # Web browser modules
-    (configLib.moduleImport "applications/browser/default.nix")
+    (configLib.moduleImport "applications/app-firefox.nix")
   ];
 }

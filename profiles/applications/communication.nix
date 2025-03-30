@@ -7,6 +7,6 @@
 }: {
   imports = [
     # Communication applications
-    (configLib.moduleImport "applications/communication/default.nix")
+    (configLib.moduleImport "applications/app-discord.nix")
   ];
 }

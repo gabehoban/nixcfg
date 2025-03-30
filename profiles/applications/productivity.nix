@@ -7,6 +7,6 @@
 }: {
   imports = [
     # Productivity applications
-    (configLib.moduleImport "applications/productivity/default.nix")
+    (configLib.moduleImport "applications/app-claude.nix")
   ];
 }
