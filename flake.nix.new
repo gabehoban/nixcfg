@@ -76,6 +76,7 @@
           modules = [
             (configLib.relativeToRoot "hosts/workstation")
             chaotic.nixosModules.default
+            home-manager.nixosModules.home-manager
           ];
         };
       };

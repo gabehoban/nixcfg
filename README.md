@@ -1,97 +1,76 @@
-# Gabe's NixOS Configuration
+# NixOS Configuration
 
-A modular, organized NixOS configuration repository with support for multiple hosts.
+This repository contains a modular NixOS configuration using the Nix Flakes system. It's designed to be maintainable, flexible, and scalable for different hosts and use cases.
 
-## Features
+## Structure
 
-- Modular design with separation of concerns
-- Support for multiple hosts/machines
-- Impermanence support
-- Common configurations shared across hosts
-- Custom packages and overlays
-- Installation scripts and tools
+The configuration is organized into the following directories:
 
-## Directory Structure
-
-```
-nixcfg/
-├── flake.nix                # Main flake configuration
-├── hosts/                   # Host-specific configurations
-├── images/                  # NixOS installation images
-├── lib/                     # Helper functions and utilities
-├── overlays/                # Package overlays
-├── pkgs/                    # Custom packages
-└── scripts/                 # Utility scripts
-```
-
-## Quick Start
-
-```bash
-curl -L nix.norpie.dev | sh
-```
-
-## Installation
-
-### Prerequisites
-
-- NixOS installation media
-- Internet connection
-- Basic knowledge of disk partitioning
-
-### Steps
-
-1. Boot from a NixOS installation media
-2. Install using disko:
-   ```bash
-   # Partition and format disks
-   sudo nix run github:nix-community/disko \
-       --extra-experimental-features "nix-command flakes" \
-       --no-write-lock-file \
-       -- \
-       --mode zap_create_mount \
-       "hosts/${TARGET_HOST}/disks.nix"
-
-   # Install NixOS
-   sudo nixos-install --flake ".#${TARGET_HOST}"
-   ```
+- **hosts/**: Host-specific configurations
+  - Each subdirectory represents a different machine (e.g., `workstation`, `server`, etc.)
+  - Host configurations import modules and profiles as needed
+  
+- **modules/**: Atomic, focused modules for specific functionality
+  - `core/`: Essential system modules (boot, nix, locale, etc.)
+  - `hardware/`: Hardware-specific modules (CPUs, GPUs, etc.)
+  - `desktop/`: Desktop environment modules (GNOME, KDE, etc.)
+  - `services/`: System service modules (SSH, audio, etc.)
+  - `applications/`: Application configurations
+  - `users/`: User profile configurations
+  
+- **profiles/**: Reusable configuration patterns that combine modules
+  - `core/`: Core system profiles (minimal, desktop, server)
+  - `desktop/`: Desktop environment profiles
+  - `hardware/`: Hardware-specific profiles
+  - `development/`: Development environment profiles
+  
+- **lib/**: Helper functions and utilities
+- **overlays/**: Custom package overlays
+- **pkgs/**: Custom package definitions
 
 ## Usage
 
-### Building the System
+### Building and Activating
+
+To build and activate a configuration:
 
 ```bash
-# Rebuild and switch
-sudo nixos-rebuild switch --flake .#workstation
-
-# Build without switching
-nix build .#nixosConfigurations.workstation.config.system.build.toplevel
+# Build and activate a specific host configuration
+nixos-rebuild switch --flake .#workstation
 ```
 
-### Creating Installation Media
+### Adding New Hosts
 
-```bash
-# Build workstation ISO
-nix build .#nixosConfigurations.iso-workstation.config.system.build.isoImage
-```
+1. Create a new directory in `hosts/` with your hostname
+2. Create a `default.nix` file in that directory that imports the necessary profiles and modules
+3. Update `flake.nix` to include your new host in the `nixosConfigurations` attribute
 
-### System Maintenance
+### Adding New Modules
 
-Use the maintenance scripts to keep your system up-to-date:
+1. Create a new file in the appropriate subdirectory of `modules/`
+2. Write your module configuration
+3. Import it in your host configuration or in a profile
 
-```bash
-./scripts/maintenance/update-system
-```
+### Creating Profiles
 
-## Adding a New Host
+1. Create a new file in the appropriate subdirectory of `profiles/`
+2. Import the necessary modules using the `configLib.moduleImport` function
+3. Import the profile in your host configuration using the `configLib.profileImport` function
 
-1. Create a new directory under `hosts/`:
-   ```bash
-   mkdir -p hosts/newhost/{hardware,default.nix}
-   ```
-2. Configure the host in `hosts/newhost/default.nix`
-3. Add hardware configuration in `hosts/newhost/hardware/`
-4. Add the host to `flake.nix`
+## Design Philosophy
+
+This configuration follows these design principles:
+
+1. **Modularity**: Each module has a specific, focused purpose
+2. **Reusability**: Profiles combine common module patterns for easy reuse
+3. **Discoverability**: Clear directory structure makes it easy to find modules
+4. **Maintainability**: Smaller, focused modules are easier to maintain
+5. **Flexibility**: More granular control over which modules are included
+
+## Migration
+
+If you're migrating from a previous NixOS configuration structure, see the [MIGRATION.md](./MIGRATION.md) guide for step-by-step instructions.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the terms of the MIT license.
