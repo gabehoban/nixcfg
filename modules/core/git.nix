@@ -26,26 +26,53 @@
 
       # Core Git behavior settings
       extraConfig = {
-        # GPG sign all commits
-        commit.gpgsign = true;
-
-        # Use "main" as the default branch name for new repositories
         init.defaultBranch = "main";
-
-        # Rebase local changes on pull instead of creating merge commits
+        branch.sort = "-committerdate";
+        color.ui = true;
+        column.ui = "auto";
+        commit.verbose = true;
+        core = {
+          editor = "nvim";
+          untrackedCache = true;
+          whitespace = "trailing-space,space-before-tab,indent-with-non-tab";
+        };
+        commit.gpgsign = true;
+        checkout = {
+          defaultRemote = "origin";
+        };
+        diff = {
+          algorithm = "histogram";
+          colorMoved = "plain";
+          mnemonicPrefix = true;
+          renames = true;
+        };
+        fetch = {
+          prune = true;
+          pruneTags = true;
+        };
+        merge = {
+          conflictstyle = "zdiff3";
+          tool = "nvim -d";
+        };
         pull.rebase = true;
-
-        # Automatically set up remote tracking when pushing a new branch
-        push.autoSetupRemote = true;
+        push = {
+          autoSetupRemote = true;
+          followTags = true;
+          default = "simple";
+        };
+        rebase = {
+          autoSquash = true;
+          autoStash = true;
+          updateRefs = true;
+        };
+        tag.sort = "-version:refname";
+        safe.bareRepository = "explicit";
       };
 
       # Useful Git aliases
       aliases = {
-        # Remove branches that have been merged to master/develop
-        cleanup = "!git branch --merged | grep -v '\\*\\|master\\|develop' | xargs -n 1 -r git branch -d";
-
-        # Pretty graph log with colors and author info
         lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
+        cleanup = "!git branch --merged | grep -v '\\*\\|master\\|develop' | xargs -n 1 -r git branch -d";
       };
     };
   };
