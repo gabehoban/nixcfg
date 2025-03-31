@@ -4,14 +4,13 @@
 # Controls Nix behavior, optimization, and package settings
 {
   outputs,
-  pkgs,
   ...
 }:
 {
   # Enable nix-ld for running unpackaged binaries
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [
+    libraries = [
       # Add any missing dynamic libraries for unpackaged programs
       # here, NOT in environment.systemPackages
     ];
@@ -47,16 +46,16 @@
 
       # Binary caches for faster builds
       trusted-substituters = [
-        "https://cache.garnix.io"
         "https://cache.nixos.org/"
+        "https://gabehoban.cachix.org"
         "https://chaotic-nyx.cachix.org"
         "https://nix-community.cachix.org"
       ];
 
       # Public keys for binary caches
       trusted-public-keys = [
-        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "gabehoban.cachix.org-1:8KJ3WRVyJGR7/Ghf1qol4pCqmmGuxNNpedDneyivky4="
         "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
