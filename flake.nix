@@ -34,9 +34,6 @@
       url = "github:k3d3/claude-desktop-linux-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # External overlays
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   # ==================== OUTPUTS ====================
@@ -97,7 +94,6 @@
     };
   nixConfig = {
     extra-substituters = [
-      "https://cache.garnix.io"
       "https://cache.nixos.org/"
       "https://chaotic-nyx.cachix.org"
       "https://nix-community.cachix.org"
