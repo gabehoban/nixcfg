@@ -2,15 +2,14 @@
   pkgs ? (import ../nixpkgs.nix) { },
 }:
 
-# ==================== PACKAGE CATEGORY IMPORTS ====================
+# ==================== PACKAGE IMPORTS ====================
 let
-  # Development tools and utilities
+  # All packages in flat structure
+  all = import ./all { inherit pkgs; };
+
+  # Legacy imports for backward compatibility
   development = import ./development { inherit pkgs; };
-
-  # Shell enhancements and tools
   shells = import ./shells { inherit pkgs; };
-
-  # General utilities
   utils = import ./utils { inherit pkgs; };
 
   # Function to merge package sets
@@ -19,8 +18,9 @@ in
 
 # ==================== EXPORTED PACKAGES ====================
 mergePkgSets [
+  all
+  # Legacy imports below - will be removed in future
   development
   shells
   utils
-  # Add additional package categories here
 ]

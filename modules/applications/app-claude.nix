@@ -1,10 +1,8 @@
 # modules/applications/app-claude.nix
 #
-# Claude AI desktop client configuration
+# Claude AI client configuration
 {
-  inputs,
   pkgs,
-  lib,
   ...
 }:
 {
@@ -15,13 +13,8 @@
     # UV Python package manager (dependency for codemcp)
     pkgs.uv
 
-    # Claude Desktop client with FHS compatibility
-    (inputs.claude-desktop.packages.x86_64-linux.claude-desktop-with-fhs.overrideAttrs (
-      _final: _prev: {
-        # Set appropriate license metadata
-        meta.license = lib.licenses.free;
-      }
-    ))
+    # Claude client with FHS compatibility
+    pkgs.claude-code
   ];
 
   #
