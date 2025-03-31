@@ -5,14 +5,19 @@
 {
   configLib,
   ...
-}: {
+}:
+{
   imports = [
     # Core system modules
     (configLib.moduleImport "core/boot.nix")
-    (configLib.moduleImport "core/nix.nix")
-    (configLib.moduleImport "core/locale.nix")
+    (configLib.moduleImport "core/git.nix")
     (configLib.moduleImport "core/impermanence.nix")
-    
+    (configLib.moduleImport "core/locale.nix")
+    (configLib.moduleImport "core/nix.nix")
+    (configLib.moduleImport "core/packages.nix")
+    (configLib.moduleImport "core/starship.nix")
+    (configLib.moduleImport "core/zsh.nix")
+
     # Network modules (flattened structure)
     (configLib.moduleImport "network/basic.nix")
   ];

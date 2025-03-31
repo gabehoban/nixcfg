@@ -13,14 +13,14 @@
     # External Module Integrations
     # ───────────────────────────────────────────
     inputs.home-manager.nixosModules.home-manager
-    inputs.stylix.nixosModules.stylix
     inputs.disko.nixosModules.disko
 
     # ───────────────────────────────────────────
     # Hardware Configuration
     # ───────────────────────────────────────────
-    # Use hardware profiles instead of individual modules
-    (configLib.profileImport "hardware/amd-desktop.nix")
+    (configLib.moduleImport "hardware/hw-cpu-amd.nix")
+    (configLib.moduleImport "hardware/hw-gpu-amd.nix")
+    (configLib.moduleImport "network/default.nix")
 
     # Host-specific hardware configuration
     ./hardware
@@ -30,14 +30,6 @@
     # ───────────────────────────────────────────
     # Use the GNOME desktop profile instead of individual modules
     (configLib.profileImport "desktop/gnome.nix")
-    
-    # ───────────────────────────────────────────
-    # Applications
-    # ───────────────────────────────────────────
-    (configLib.profileImport "applications/default.nix")
-    (configLib.profileImport "applications/gaming.nix")
-    (configLib.profileImport "applications/communication.nix")
-    (configLib.profileImport "applications/productivity.nix")
 
     # ───────────────────────────────────────────
     # Additional Services (only include what's needed)
@@ -64,4 +56,7 @@
       inherit configLib;
     };
   };
+
+  # Enable AMD-specific firmware and drivers
+  hardware.enableRedistributableFirmware = true;
 }

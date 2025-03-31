@@ -19,6 +19,7 @@
     steam = pkgs.steam.override {
       extraPkgs =
         pkgs: with pkgs; [
+          gamescope
           libgdiplus
           libpng
           libpulseaudio
@@ -31,6 +32,11 @@
     };
   };
 
+  environment.systemPackages = [
+    pkgs.ckan
+    pkgs.gamescope
+  ];
+
   #
   # Persistent configuration
   #
@@ -42,6 +48,7 @@
 
       # Steam configuration and game library
       ".steam"
+      ".local/share/CKAN"
       ".local/share/Steam"
     ];
   };
