@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  schedule:
+    # Run at 3:00 AM UTC on the 1st of every month
+    - cron: "0 3 1 * *"
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (vX.Y.Z format)"
+        required: true
+        type: string
+
+# Prevent concurrent runs
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    # Use standard runner for release builds
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Free disk space
+      - name: Free disk space
+        uses: thiagokokada/free-disk-space@main
+        with:
+          opt: true
+          tool-cache: true
+          usrlocal: true
+          usrmisc: true
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            accept-flake-config = true
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: gabehoban
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          extraPullNames: nix-community, chaotic-nyx
+
+      - name: Get version from tag, input or generate monthly version
+        id: get_version
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION=${{ github.event.inputs.version }}
+          else
+            # Automatic monthly release - use format vYYYY.MM.1
+            YEAR=$(date +"%Y")
+            MONTH=$(date +"%m")
+            VERSION="v${YEAR}.${MONTH}.1"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Using version: ${VERSION}"
+
+      - name: Build workstation config
+        run: |
+          nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
+
+      - name: Generate CHANGELOG
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: .github/changelog-config.json
+          commitMode: true
+          ignorePreReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Create a tag if running on schedule
+      - name: Create Git Tag
+        if: github.event_name == 'schedule'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ steps.get_version.outputs.version }}
+          git push origin ${{ steps.get_version.outputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: Release ${{ steps.get_version.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
