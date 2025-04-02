@@ -28,52 +28,39 @@
       url = "https://raw.githubusercontent.com/NixOS/nixos-artwork/master/wallpapers/nix-wallpaper-nineish-catppuccin-frappe.png";
       sha256 = "03lrj64zig62ibhcss5dshy27kvw363gzygm4rgk7ihbdjj2sw7w";
     };
-
-    # Base color scheme (Nord theme)
+    targets.qt.enable = false;
     polarity = "dark";
-    base16Scheme = lib.mkDefault "${pkgs.base16-schemes}/share/themes/nord.yaml";
-
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-macchiato.yaml";
+    cursor = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 12;
+    };
+    fonts = {
+      monospace = {
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font Mono";
+      };
+      emoji = {
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
+      };
+      sizes = {
+        terminal = 13;
+      };
+    };
     homeManagerIntegration.autoImport = true;
   };
-  home-manager.users.gabehoban = {
-    stylix = {
+
+  home-manager.users.gabehoban.stylix = {
+    enable = true;
+    autoEnable = true;
+
+    iconTheme = {
       enable = true;
-
-      # Target-specific configurations
-      targets.qt.platform = lib.mkForce "qtct";
-
-      iconTheme = {
-        package = pkgs.vimix-icon-theme;
-        dark = "Vimix-Doder-dark";
-        light = "Vimix-Doder-dark";
-      };
-
-      # Cursor theme
-      cursor = {
-        name = "Adwaita";
-        package = pkgs.adwaita-icon-theme;
-        size = 12;
-      };
-
-      # Font configuration
-      fonts = {
-        # Monospace font (for terminal, code, etc.)
-        monospace = {
-          package = pkgs.nerd-fonts.jetbrains-mono;
-          name = "JetBrainsMono Nerd Font Mono";
-        };
-
-        # Emoji font
-        emoji = {
-          package = pkgs.noto-fonts-emoji;
-          name = "Noto Color Emoji";
-        };
-
-        # Font sizes for specific applications
-        sizes = {
-          terminal = 13;
-        };
-      };
+      package = pkgs.vimix-icon-theme;
+      dark = "Vimix-black-dark";
+      light = "Vimix-black-dark";
     };
   };
   systemd.services.systemd-suspend.environment.SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";

@@ -15,6 +15,7 @@
       excludePackages = with pkgs; [ xterm ];
 
       # Enable GDM and GNOME desktop
+      displayManager.gdm.autoSuspend = false;
       displayManager.gdm.enable = true;
       desktopManager.gnome.enable = true;
     };

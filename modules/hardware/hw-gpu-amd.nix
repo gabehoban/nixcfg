@@ -36,6 +36,9 @@
     extraPackages = with pkgs; [
       rocmPackages.clr.icd
       amdvlk
+      vulkan-loader
+      vulkan-validation-layers
+      vulkan-extension-layer
     ];
     extraPackages32 = with pkgs; [
       driversi686Linux.amdvlk

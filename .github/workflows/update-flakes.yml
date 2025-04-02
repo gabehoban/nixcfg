@@ -34,8 +34,8 @@ jobs:
           extraPullNames: nix-community, chaotic-nyx
       - name: Update flake.lock
         run: |
-          git config user.name "baymax-bot[bot]"
-          git config user.email "baymax-bot[bot]@users.noreply.github.com"
+          git config user.name "dev-baymax[bot]"
+          git config user.email "dev-baymax[bot]@users.noreply.github.com"
           nix flake update --commit-lock-file
       - name: "Build NixOS configs for: workstation"
         run: |-
@@ -53,6 +53,6 @@ jobs:
           delete-branch: true
           title: Update flake.lock
       - name: Merge Pull Request
-        run: gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto --delete-branch
+        run: gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto --squash --delete-branch
         env:
           GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
