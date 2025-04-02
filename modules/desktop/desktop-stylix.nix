@@ -56,6 +56,8 @@
     enable = true;
     autoEnable = true;
 
+    targets.zed.enable = false;
+
     iconTheme = {
       enable = true;
       package = pkgs.vimix-icon-theme;

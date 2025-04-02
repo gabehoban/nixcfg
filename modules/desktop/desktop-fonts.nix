@@ -31,6 +31,7 @@
       dejavu_fonts
       iosevka-bin
       nerd-fonts.jetbrains-mono
+      nerd-fonts.caskaydia-cove
 
       # Emoji and symbol fonts
       noto-fonts-emoji

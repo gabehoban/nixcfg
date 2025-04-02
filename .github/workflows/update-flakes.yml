@@ -53,6 +53,6 @@ jobs:
           delete-branch: true
           title: Update flake.lock
       - name: Merge Pull Request
-        run: gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto --squash --delete-branch
+        run: gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --auto --squash --delete-branch
         env:
           GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"

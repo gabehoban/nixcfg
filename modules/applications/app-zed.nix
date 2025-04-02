@@ -28,15 +28,38 @@
       shfmt # Shell formatter
     ];
 
+    extensions = [
+      "git-firefly"
+      "nix"
+      "one-dark-pro"
+      "sql"
+      "toml"
+    ];
+
     # User preferences and settings
     userSettings = {
+      auto_update = false;
+
       # UI preferences
-      font_family = "JetBrainsMono Nerd Font";
+      buffer_font_family = "CaskaydiaCove Nerd Font";
+      buffer_font_size = 18;
+      ui_font_family = "CaskaydiaCove Nerd Font";
+      ui_font_size = 17;
       line_height = "comfortable";
       autosave = "on_focus_change";
 
       # Disable GitHub Copilot
       features.copilot = false;
+
+      tabs = {
+        file_icons = true;
+        git_status = true;
+      };
+
+      indent_guides = {
+        enabled = true;
+        coloring = "indent_aware";
+      };
 
       # Nix language configuration
       nixd = {
@@ -48,10 +71,14 @@
       # Language server preferences
       languages = {
         # Only use nixd for Nix files, disable nil language server
-        Nix.language_servers = [
-          "nixd"
-          "!nil"
-        ];
+        Nix = {
+          language_servers = [
+            "nixd"
+            "!nil"
+          ];
+          formatter = "language_server";
+          format_on_save = "on";
+        };
       };
 
       # Privacy settings - disable telemetry collection
