@@ -47,6 +47,7 @@
       efi.canTouchEfiVariables = true;
       # Disabled in favor of lanzaboote
       systemd-boot.enable = lib.mkForce false;
+      systemd-boot.configurationLimit = 3;
       timeout = 3;
     };
 
