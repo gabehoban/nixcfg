@@ -20,7 +20,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  create-tag:
+    # This job only runs on schedule to create a tag
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate version
+        id: get_version
+        run: |
+          # Automatic monthly release - use format vYYYY.MM.1
+          YEAR=$(date +"%Y")
+          MONTH=$(date +"%m")
+          VERSION="v${YEAR}.${MONTH}.1"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Using version: ${VERSION}"
+
+      - name: Create Git Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ steps.get_version.outputs.version }}
+          git push origin ${{ steps.get_version.outputs.version }}
+          echo "Created and pushed tag ${{ steps.get_version.outputs.version }}"
+
   release:
+    # This job runs when triggered by tag push (or workflow_dispatch with version input)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     # Use standard runner for release builds
     runs-on: ubuntu-latest
     permissions:
@@ -56,18 +88,13 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           extraPullNames: nix-community, chaotic-nyx
 
-      - name: Get version from tag, input or generate monthly version
+      - name: Get version from tag or input
         id: get_version
         run: |
           if [[ "${{ github.event_name }}" == "push" ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             VERSION=${{ github.event.inputs.version }}
-          else
-            # Automatic monthly release - use format vYYYY.MM.1
-            YEAR=$(date +"%Y")
-            MONTH=$(date +"%m")
-            VERSION="v${YEAR}.${MONTH}.1"
           fi
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Using version: ${VERSION}"
@@ -86,15 +113,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Create a tag if running on schedule
-      - name: Create Git Tag
-        if: github.event_name == 'schedule'
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git tag ${{ steps.get_version.outputs.version }}
-          git push origin ${{ steps.get_version.outputs.version }}
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -105,3 +123,5 @@ jobs:
           prerelease: false
           generate_release_notes: true
           token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_REF: refs/tags/${{ steps.get_version.outputs.version }}
