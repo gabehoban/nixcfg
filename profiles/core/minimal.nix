@@ -18,6 +18,7 @@
     (configLib.moduleImport "core/secrets.nix")
     (configLib.moduleImport "core/starship.nix")
     (configLib.moduleImport "core/zsh.nix")
+    (configLib.moduleImport "core/direnv.nix")
 
     # Network modules (flattened structure)
     (configLib.moduleImport "network/basic.nix")

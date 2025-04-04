@@ -27,7 +27,7 @@
     (configLib.moduleImport "core/starship.nix")
     (configLib.moduleImport "core/zsh.nix")
 
-    # Hardware 
+    # Hardware
     ./hardware
     (configLib.moduleImport "hardware/hw-platform-rpi.nix")
 
@@ -56,7 +56,7 @@
   };
 
   # SSH host key for age encryption
-  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmlr0LtfwsOHLCmI87VUS8YqGWa/dKKWtQFGuvoH89E";
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHtc5FwuWkORiGuDmr41ANqYoMTu6VX/kh03hldm1l35";
 
   # Enable Raspberry Pi firmware
   hardware.enableRedistributableFirmware = true;

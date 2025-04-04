@@ -1,4 +1,18 @@
 result
+result-*
 .archive
 bins/*
 nixos.wsl
+
+# direnv
+.direnv/
+
+# Local backup files
+*.bak
+*~
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo

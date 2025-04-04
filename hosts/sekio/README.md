@@ -93,7 +93,7 @@ After booting from the SD card image, deploy the full configuration:
 
 ```bash
 # From your workstation
-colmena apply --on sekio
+deploy -s '.#sekio'
 ```
 
 During deployment:

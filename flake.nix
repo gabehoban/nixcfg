@@ -13,8 +13,8 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     # Remote deployment tools
-    colmena = {
-      url = "github:zhaofengli/colmena";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -55,7 +55,7 @@
       flake-utils,
       chaotic,
       agenix-rekey,
-      colmena,
+      deploy-rs,
       # Hardware support
       hardware,
       # System management
@@ -105,52 +105,27 @@
         };
       };
 
-      # --------- Colmena Configuration ---------
-      colmena = {
-        meta = {
-          # Support both architectures for deployment
-          systems = [
-            "x86_64-linux"
-            "aarch64-linux"
-          ];
-          nixpkgs = import nixpkgs {
-            system = defaultSystem;
-          };
-          # Enable distributed builds for all nodes
-          nodeNixSettings = {
-            substituters = [
-              "https://cache.nixos.org/"
-              "https://gabehoban.cachix.org"
-              "https://chaotic-nyx.cachix.org"
-              "https://nix-community.cachix.org"
-            ];
-            trusted-public-keys = [
-              "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-              "gabehoban.cachix.org-1:8KJ3WRVyJGR7/Ghf1qol4pCqmmGuxNNpedDneyivky4="
-              "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
-              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-            ];
+      # --------- Deploy-rs Configuration ---------
+      deploy = {
+        nodes = {
+          # Deploy configuration for sekio
+          sekio = {
+            hostname = "sekio.local";
+            sshUser = "gabehoban";
+            profiles = {
+              system = {
+                user = "root";
+                path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sekio;
+                sshOpts = [ "-t" ]; # Required for sudo password prompt
+                magicRollback = true; # Enable automatic rollback on failure
+                remoteBuild = false; # Build locally and push to target
+                autoRollback = true; # Automatically roll back on connection loss
+                confirmTimeout = 300; # 5 minute timeout for confirmation
+              };
+            };
+            fastConnection = false; # Optimize for slower connections
           };
         };
-
-        # Define the sekio node for Colmena
-        sekio =
-          { self, ... }:
-          {
-            deployment = {
-              targetHost = "sekio.local";
-              targetUser = "gabehoban"; # Use non-root user with sudo privileges
-              sudo.enable = true; # Use sudo for privileged operations
-              allowLocalDeployment = false;
-              buildOnTarget = false;
-              targetPlatform = "aarch64-linux";
-              remoteBuild = false; # Build locally and push to target
-            };
-
-            imports = [
-              self.nixosConfigurations.sekio.config
-            ];
-          };
       };
 
       # --------- SD Card Images ---------
@@ -218,6 +193,9 @@
 
       # --------- Development Tools ---------
       formatter = configLib.forAllSystems (pkgsSystem: self.packages.${pkgsSystem}.nixfmt-plus);
+      
+      # Add deploy-rs checks
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     }
     // flake-utils.lib.eachDefaultSystem (system: rec {
       pkgs = import nixpkgs {
@@ -229,7 +207,7 @@
           pkgs.agenix-rekey
           pkgs.age-plugin-yubikey
           pkgs.rage
-          pkgs.colmena
+          deploy-rs.packages.${pkgs.system}.deploy-rs
         ];
       };
     });
