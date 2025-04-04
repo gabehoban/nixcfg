@@ -11,6 +11,7 @@ modules/hardware/
 ├── default.nix                # Core hardware detection and configuration
 ├── hw-cpu-amd.nix             # AMD CPU-specific configuration
 ├── hw-gpu-amd.nix             # AMD GPU-specific configuration
+├── rpi-optimizations.nix      # Raspberry Pi optimizations
 └── HARDWARE_CONFIG.md         # This documentation file
 ```
 
@@ -144,6 +145,14 @@ boot.kernelParams = [ "parameter=value" ];
 - Always enable microcode updates for security
 - Consider power management options like `intel_pstate` settings
 - For Intel GPUs, ensure appropriate acceleration packages are installed
+
+### Raspberry Pi Hardware
+
+- Enable SD card optimizations to reduce writes and extend SD card lifespan
+- Consider enabling ZRAM swap to improve performance and reduce SD card wear
+- Configure logs to be stored in memory (volatile) when possible
+- Enable power saving features for better thermal management and battery life when applicable
+- Apply appropriate security hardening settings
 
 ## Troubleshooting
 

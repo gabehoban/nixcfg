@@ -81,6 +81,27 @@
             chaotic.nixosModules.default
           ];
         };
+        
+        sekio = nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          system = "aarch64-linux";
+          modules = [
+            (configLib.relativeToRoot "hosts/sekio")
+            { nixpkgs.overlays = [ self.overlays.hardware ]; }
+          ];
+        };
+      };
+      
+      # --------- SD Card Images ---------
+      images = {
+        sekio = import "${nixpkgs}/nixos/lib/make-system.nix" {
+          system = "aarch64-linux";
+          modules = [
+            (configLib.relativeToRoot "images/sekio.nix")
+            { nixpkgs.overlays = [ self.overlays.hardware ]; }
+          ];
+          specialArgs = { inherit inputs outputs configLib; };
+        };
       };
 
       # --------- Package Overlays ---------

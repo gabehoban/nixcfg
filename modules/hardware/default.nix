@@ -15,6 +15,9 @@
 
     # GPU modules
     ./hw-gpu-amd.nix # AMD GPU drivers and configuration
+    
+    # Platform-specific optimizations
+    ./rpi-optimizations.nix # Raspberry Pi optimizations
   ];
 
   # This module serves as an aggregator for hardware-specific configurations
@@ -24,4 +27,8 @@
   # 1. Create a new file named hw-component-vendor.nix (e.g., hw-storage-samsung.nix)
   # 2. Add hardware-specific configuration following the module pattern
   # 3. Import the new file in this default.nix
+  #
+  # For platform-specific configurations (like Raspberry Pi):
+  # - Use platform-specific modules like rpi-optimizations.nix
+  # - These can be selectively imported directly into host configurations
 }

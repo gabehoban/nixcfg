@@ -6,6 +6,9 @@ This directory contains modules for configuring system services and daemons.
 
 - `ai.nix`: Configuration for AI-related services
 - `audio.nix`: Audio subsystem configuration (PipeWire, PulseAudio, etc.)
+- `chrony.nix`: NTP server/client with GPS integration for precise timekeeping
+- `gpsd.nix`: GPS daemon configuration for GPS hardware
+- `gps-ntp-tools.nix`: GPS and NTP related tools for monitoring and troubleshooting
 - `ssh.nix`: SSH server and client configuration
 - `yubikey.nix`: YubiKey authentication and security services
 - `zram.nix`: ZRAM compressed memory configuration
