@@ -8,30 +8,32 @@
 }:
 {
   imports = [
-    # Base image
-    "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
-    # Sekio host configuration
-    (configLib.relativeToRoot "hosts/sekio")
+    # Absolutely minimal config for SD image builder
+    (configLib.relativeToRoot "hosts/sekio/hardware")
+    (configLib.moduleImport "core/locale.nix")
+    (configLib.moduleImport "services/ssh.nix")
   ];
+  
+  # Basic system settings
+  networking.hostName = "sekio";
+  
+  # No home-manager in minimal image
 
   # Set system configuration for the image
-  sdImage = {
-    # Add optional extra space to the rootfs (in MiB)
-    rootFsSize = 4096;
-    # Set image compression, options: [none, gzip, bzip2, xz]
-    compressImage = "bzip2";
-    # Set a descriptive image name
-    imageName = "nixos-sd-image-sekio-${lib.trivial.release}.img";
-  };
+  sdImage.imageBaseName = "nixos-sd-image-sekio";
+  sdImage.compressImage = true;
+  
+  # Increase the size of the root filesystem (4 GB)
+  fileSystems."/".autoResize = true;
 
   # Enable SSH for remote access (initial setup only)
   services.openssh = {
     enable = true;
     settings = {
       # Allow root login for initial setup only
-      PermitRootLogin = "yes";
+      PermitRootLogin = lib.mkForce "yes";
       # Allow password authentication for initial setup only
-      PasswordAuthentication = true;
+      PasswordAuthentication = lib.mkForce true;
     };
   };
 
@@ -44,9 +46,6 @@
     wireless.enable = false;
     networkmanager.enable = true;
     
-    # Set hostname for easier discovery on the network
-    hostName = "sekio";
-    
     # Enable mDNS so the device can be found at sekio.local
     # This is compatible with Avahi/Bonjour
     firewall.allowedUDPPorts = [ 5353 ];
@@ -55,7 +54,7 @@
   # Enable mDNS service for hostname.local discovery
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
     ipv4 = true;
     ipv6 = true;
     publish = {
@@ -78,4 +77,13 @@
 
   # Name for the image in metadata
   system.stateVersion = "23.11";
+  
+  # Disable ZFS for Raspberry Pi
+  boot.supportedFilesystems = lib.mkForce [ "vfat" "ext4" ];
+  
+  # Use minimal kernel parameters for the image - full config will be used after install
+  # We're using mkForce to ensure these override any others during image build
+  boot.kernelParams = lib.mkForce [
+    "console=tty0"
+  ];
 }

@@ -27,4 +27,12 @@ final: prev:
       # Add any custom patches here if needed
     ];
   });
+
+  # Modify the module closure to allow missing modules during build
+  # This is critical for cross-compilation of Raspberry Pi images
+  makeModulesClosure = args:
+    prev.makeModulesClosure (args // {
+      # Allow the build to continue even if some modules are missing
+      allowMissing = true;
+    });
 }

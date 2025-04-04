@@ -12,7 +12,7 @@ This repository contains my NixOS configurations, along with custom modules and 
 
 ```
 nixcfg/
-├── hosts/         # Machine-specific configurations (currently featuring workstation)
+├── hosts/         # Machine-specific configurations (workstation and sekio)
 ├── modules/       # Atomic functionality units organized by purpose
 ├── profiles/      # Pre-composed collections of modules for quick setup
 ├── lib/           # Helper functions that make Nix life easier
@@ -22,9 +22,12 @@ nixcfg/
 
 ### Key Features
 
+- **Multi-architecture Support** - Optimized for both x86_64 and aarch64 systems
 - **AMD Hardware Support** - Optimized for AMD CPUs and GPUs
+- **Raspberry Pi Support** - Optimized for Raspberry Pi 4 with GPS/NTP capabilities
 - **GNOME Desktop** - Sleek, customized GNOME environment with carefully selected extensions
 - **Impermanence** - System state persistence where you want it, fresh boots where you don't
+- **Remote Deployment** - Build on powerful machines, deploy to resource-constrained devices
 - **Application Suite** - Curated selection including Firefox, Discord, 1Password, and more
 - **Secure Boot** - Lanzaboote integration for secure system startup
 
@@ -33,8 +36,26 @@ nixcfg/
 ### Build and Deploy
 
 ```bash
-# Switch to this configuration (replace workstation with your hostname)
+# Switch to workstation configuration
 nixos-rebuild switch --flake .#workstation
+
+# Deploy to sekio using Colmena
+colmena apply --on sekio
+```
+
+### Remote Deployment
+
+This repository uses [Colmena](https://github.com/zhaofengli/colmena) for remote deployment of the Raspberry Pi configuration, which builds the system on the more powerful workstation and deploys to the Pi.
+
+```bash
+# Build and deploy sekio configuration
+colmena apply --on sekio
+
+# Build only without deploying
+colmena build --on sekio
+
+# Build and check what would change, without applying
+colmena apply --dry-run --on sekio
 ```
 
 ### Customizing for Your Machine
@@ -43,6 +64,7 @@ nixos-rebuild switch --flake .#workstation
 2. Set up hardware configs in `hosts/your-machine/hardware/`
 3. Create a `default.nix` that imports the modules and profiles you need
 4. Add your machine to `flake.nix` under `nixosConfigurations`
+5. Optionally add your machine to the Colmena configuration
 
 ## 🧰 Working with Modules
 

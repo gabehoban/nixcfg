@@ -11,6 +11,12 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     impermanence.url = "github:nix-community/impermanence";
     flake-utils.url = "github:numtide/flake-utils";
+    
+    # Remote deployment tools
+    colmena = {
+      url = "github:zhaofengli/colmena";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Extended modules (with nixpkgs follows)
     agenix = {
@@ -49,6 +55,7 @@
       flake-utils,
       chaotic,
       agenix-rekey,
+      colmena,
       ...
     }@inputs:
     let
@@ -92,12 +99,53 @@
         };
       };
       
+      # --------- Colmena Configuration ---------
+      colmena = {
+        meta = {
+          nixpkgs = import nixpkgs {
+            system = "x86_64-linux";
+          };
+          # Enable distributed builds for all nodes
+          nodeNixSettings = {
+            substituters = [
+              "https://cache.nixos.org/"
+              "https://gabehoban.cachix.org"
+              "https://chaotic-nyx.cachix.org"
+              "https://nix-community.cachix.org"
+            ];
+            trusted-public-keys = [
+              "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+              "gabehoban.cachix.org-1:8KJ3WRVyJGR7/Ghf1qol4pCqmmGuxNNpedDneyivky4="
+              "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
+              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+            ];
+          };
+        };
+        
+        # Define the sekio node for Colmena
+        sekio = { name, nodes, self, ... }: {
+          deployment = {
+            targetHost = "sekio.local";
+            targetUser = "gabehoban";  # Use non-root user with sudo privileges
+            sudo.enable = true;        # Use sudo for privileged operations
+            allowLocalDeployment = false;
+            buildOnTarget = false;
+            targetPlatform = "aarch64-linux";
+            remoteBuild = false;  # Build locally and push to target
+          };
+          
+          imports = [
+            self.nixosConfigurations.sekio.config
+          ];
+        };
+      };
+      
       # --------- SD Card Images ---------
       images = {
         sekio = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           modules = [
-            "${nixpkgs.outPath}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+            "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
             (configLib.relativeToRoot "images/sekio.nix")
             { nixpkgs.overlays = [ self.overlays.hardware ]; }
           ];
@@ -135,6 +183,7 @@
           pkgs.agenix-rekey
           pkgs.age-plugin-yubikey
           pkgs.rage
+          pkgs.colmena
         ];
       };
     });

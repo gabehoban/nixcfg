@@ -24,13 +24,6 @@
     loader = {
       generic-extlinux-compatible.enable = true;
       grub.enable = false;
-      
-      # Use custom U-Boot with auto-boot configuration
-      # that ignores UART interrupts during boot
-      uboot = {
-        enable = true;
-        package = pkgs.ubootRaspberryPi4_64bit;
-      };
     };
     consoleLogLevel = lib.mkDefault 7;
     
@@ -44,14 +37,8 @@
     # Explicitly load PPS GPIO module for precise timing
     kernelModules = [ "pps_gpio" ];
     extraModulePackages = [ ];
-    kernelParams = [
-      # Use only the display console, not the UART/serial console
-      # since the GPS HAT uses these pins
-      "console=tty0"
-      
-      # Disable dynamic ticks for better timing accuracy
-      "nohz=off"
-    ];
+    # Main kernel parameters are consolidated in rpi-config.nix
+    kernelParams = [];
   };
 
   # File systems configuration
@@ -67,29 +54,27 @@
     };
   };
 
-  # Hardware-specific settings
-  hardware.deviceTree = {
-    filter = "bcm2711-rpi-4-*.dtb";
-  };
+  # Hardware-specific settings are now consolidated in rpi-config.nix
   
-  # Configure device tree settings through the standard mechanism
-  hardware.raspberry-pi = {
+  # Configure additional GPIO/WiFi settings in boot.extraConfig through extraModprobeConfig
+  boot.extraModprobeConfig = ''
     # Disable onboard WiFi
-    dwc2.enable = false;
+    blacklist brcmfmac
+    blacklist brcmutil
     
     # Disable onboard Bluetooth
-    bluetooth.enable = false;
-    
-    # Use mini-UART to free up PL011 UART for GPS
-    miniUart.enable = true;
-  };
+    blacklist btbcm
+    blacklist hci_uart
+  '';
   
-  # Disable audio
-  hardware.raspberry-pi.audio.enable = false;
+  # Additional kernel parameters are set above
   
-  # Explicitly disable serial console on UART0 (ttyAMA0)
+  # Audio is disabled by default
+  
+  # Explicitly disable serial console on UART0 (ttyAMA0/ttyS0)
   # This is critical to free up the UART for GPS
   services.getty.autologinUser = null;
+  # Disable both serial consoles to ensure the GPS has exclusive access
   systemd.services."serial-getty@ttyAMA0".enable = false;
   systemd.services."serial-getty@ttyS0".enable = false;
   
@@ -98,8 +83,6 @@
 
   # Hardware firmware support is enabled in the host config
   hardware.i2c.enable = true;
-  hardware.gpio.enable = true;
   
-  # Disable GPU acceleration to save power
-  hardware.raspberry-pi."4".fkms-3d.enable = false;
+  # GPU acceleration settings are handled by raspberry-pi-4 module
 }

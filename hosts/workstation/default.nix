@@ -60,4 +60,7 @@
 
   # Enable AMD-specific firmware and drivers
   hardware.enableRedistributableFirmware = true;
+  
+  # Enable cross-compilation support for Raspberry Pi (aarch64)
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 }

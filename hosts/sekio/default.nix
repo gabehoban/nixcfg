@@ -13,7 +13,7 @@
   # This configuration will override the initial image settings
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true; # Updated to newer option
     ipv4 = true;
     ipv6 = true;
     publish = {
@@ -60,7 +60,7 @@
     };
   };
   
-  age.rekey.hostPubkey = "/etc/ssh/ssh_host_ed25519_key.pub";
+  age.rekey.hostPubkey = "/persist/etc/ssh/ssh_host_ed25519_key.pub";
   
   # Enable Raspberry Pi firmware with specific configuration
   hardware.enableRedistributableFirmware = true;
@@ -84,6 +84,13 @@
     enableZramSwap = true;
     volatileLogs = true;
     enablePowerSaving = true;
+    
+    # Explicitly enable security features 
+    security = {
+      enableFirewall = true;
+      enableSSHHardening = true;
+      enableFail2ban = true;
+    };
   };
   
   # TRIM is handled by optimizeForSD setting

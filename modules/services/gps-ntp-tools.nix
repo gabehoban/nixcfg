@@ -21,7 +21,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Install GPS and NTP related tools
+    # Install GPS and NTP related tools and status script
     environment.systemPackages = with pkgs; [
       # GPS tools
       gpsmon        # GPS monitoring
@@ -38,10 +38,8 @@ in
       # Terminal UI tools
       htop          # Process monitoring
       iotop         # I/O monitoring
-    ];
-    
-    # Add a simple status script for checking GPS and NTP status
-    environment.systemPackages = [
+      
+      # Status script
       (pkgs.writeShellScriptBin "gps-ntp-status" ''
         #!/bin/sh
         echo "=== GPS Status ==="
