@@ -96,7 +96,7 @@ in
 
   # Set secure initial password for setup
   # This will be replaced after nixos-rebuild with the host configuration
-  users.users.root.initialPassword = "Sekio-R00t-Init-2024";
+  users.users.root.initialPassword = "nixos";
 
   # Configure network for headless access
   networking = {

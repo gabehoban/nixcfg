@@ -11,6 +11,7 @@
     # Core system modules
     (configLib.moduleImport "core/boot.nix")
     (configLib.moduleImport "core/git.nix")
+    # Impermanence is now opt-in via impermanence.enable = true
     (configLib.moduleImport "core/impermanence.nix")
     (configLib.moduleImport "core/locale.nix")
     (configLib.moduleImport "core/nix.nix")

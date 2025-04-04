@@ -15,7 +15,7 @@ let
   cfg = config.impermanence;
 in {
   #
-  # Module imports
+  # Module imports - always import the upstream module
   #
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
@@ -25,6 +25,9 @@ in {
   # when the impermanence module is not imported
   #
   options.impermanence = {
+    # Enable/disable impermanence
+    enable = mkEnableOption "impermanence for ephemeral state management";
+    
     # System-level directories
     directories = mkOption {
       type = types.listOf types.str;
@@ -73,10 +76,19 @@ in {
 
   # Apply configuration based on collected options
   config = {
-    #
-    # Persistent directory creation
-    #
-    system.activationScripts = {
+    # Ensure that we're intentionally using impermanence
+    assertions = [
+      {
+        assertion = !lib.hasAttr "environment" config || 
+                   !lib.hasAttr "persistence" config.environment ||
+                   !lib.pathExists "/persist" || 
+                   cfg.enable;
+        message = "Impermanence features detected but config.impermanence.enable is not set. Set impermanence.enable = true if intended.";
+      }
+    ];
+
+    # The rest of the configuration only applies when impermanence is enabled
+    system.activationScripts = mkIf cfg.enable {
       persistent-dirs.text =
         let
           # Create home directory persistence links for each user
@@ -95,9 +107,9 @@ in {
     #
     # Persistent file and directory configuration
     #
-    # Only apply the collected persistence configuration if
+    # Only apply the collected persistence configuration if enabled and
     # environment.persistence is available (impermanence is imported)
-    environment.persistence = mkIf (config ? environment.persistence) {
+    environment.persistence = mkIf (cfg.enable && config ? environment.persistence) {
       "/persist" = {
         # Hide bind mounts from user tools
         hideMounts = true;

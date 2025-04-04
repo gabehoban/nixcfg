@@ -43,6 +43,9 @@
     # ───────────────────────────────────────────
     (configLib.moduleImport "users/gabehoban.nix")
   ];
+  
+  # Enable impermanence for ephemeral system state
+  impermanence.enable = true;
 
   # ───────────────────────────────────────────
   # Home-manager configuration

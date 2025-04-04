@@ -20,7 +20,6 @@
     (configLib.moduleImport "core/git.nix")
     (configLib.moduleImport "core/locale.nix")
     (configLib.moduleImport "core/nix.nix")
-    # Only imported to provide the config.impermanence attribute
     (configLib.moduleImport "core/impermanence.nix")
     (configLib.moduleImport "core/packages.nix")
     (configLib.moduleImport "core/secrets.nix")
@@ -66,6 +65,9 @@
 
   # Enable device tree support
   hardware.raspberry-pi."4".apply-overlays-dtmerge.enable = true;
+
+  # Enable impermanence for ephemeral system state
+  impermanence.enable = false;
 
   # NixOS release version
   system.stateVersion = "24.11";
