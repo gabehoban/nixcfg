@@ -6,17 +6,22 @@
     # Core dependencies
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hardware.url = "github:NixOS/nixos-hardware";
-
-    # Framework & functionality modules
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-    impermanence.url = "github:nix-community/impermanence";
+    
+    # Flake-parts
+    flake-parts.url = "github:hercules-ci/flake-parts";
     flake-utils.url = "github:numtide/flake-utils";
-
-    # Remote deployment tools
+    
+    # Deploy-rs with flake-parts
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    # No external flake-parts modules needed
+
+    # Framework & functionality modules
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    impermanence.url = "github:nix-community/impermanence";
 
     # Extended modules (with nixpkgs follows)
     agenix = {
@@ -48,169 +53,21 @@
   };
 
   # ==================== OUTPUTS ====================
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      chaotic,
-      agenix-rekey,
-      deploy-rs,
-      # Hardware support
-      hardware,
-      # System management
-      # Boot security
-      # UI and customization
-      ...
-    }@inputs:
-    let
-      # --------- System Configuration ---------
-      # Default system architecture
-      defaultSystem = "x86_64-linux";
-
-      # --------- Library Imports ---------
-      inherit (self) outputs;
-      inherit (nixpkgs) lib;
-      configLib = import ./lib { inherit lib inputs; };
-
-      # --------- Common Arguments ---------
-      specialArgs = {
-        inherit
-          inputs
-          outputs
-          configLib
-          nixpkgs
-          ;
-        system = defaultSystem;
-      };
-    in
-    {
-      # --------- NixOS Configurations ---------
-      nixosConfigurations = {
-        workstation = nixpkgs.lib.nixosSystem {
-          inherit specialArgs;
-          modules = [
-            (configLib.relativeToRoot "hosts/workstation")
-            chaotic.nixosModules.default
-          ];
-        };
-
-        sekio = nixpkgs.lib.nixosSystem {
-          inherit specialArgs;
-          system = "aarch64-linux";
-          modules = [
-            (configLib.relativeToRoot "hosts/sekio")
-            { nixpkgs.overlays = [ self.overlays.hardware ]; }
-          ];
-        };
-      };
-
-
-      # --------- SD Card Images ---------
-      images = {
-        sekio = nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          modules = [
-            "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-            (configLib.relativeToRoot "images/sekio.nix")
-            {
-              nixpkgs.overlays = [ self.overlays.hardware ];
-
-              # Override SD image parameters
-              # Use individual settings rather than a set
-              sdImage.firmwareSize = 128; # Increase boot partition size (MB)
-              sdImage.expandOnBoot = true; # Make sure SD card is expanded on first boot
-
-              # Root partition size is controlled by the default rootfs size
-              # We disable auto-resize since we'll be creating a state partition
-
-              # For initial boot, use extlinux which is compatible with the SD card
-              # The final system will switch to u-boot after installation
-              boot.loader.generic-extlinux-compatible.enable = true;
-            }
-          ];
-          specialArgs = {
-            inherit inputs outputs configLib;
-            system = "aarch64-linux";
-          };
-        };
-
-        # Workstation installation ISO image
-        workstation-iso = nixpkgs.lib.nixosSystem {
-          system = defaultSystem;
-          modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix"
-            (configLib.relativeToRoot "images/workstation.nix")
-            {
-              nixpkgs.overlays = [ self.overlays.default ];
-            }
-          ];
-          specialArgs = {
-            inherit inputs outputs configLib;
-            system = defaultSystem;
-          };
-        };
-      };
-
-      # --------- Package Overlays ---------
-      overlays = import ./overlays { inherit inputs; };
-
-      # --------- Custom Packages ---------
-      packages = configLib.forAllSystems (
-        pkgsSystem:
-        let
-          pkgs = nixpkgs.legacyPackages.${pkgsSystem};
-        in
-        import ./pkgs { inherit pkgs; }
-      );
-
-      agenix-rekey = agenix-rekey.configure {
-        userFlake = self;
-        inherit (self) nixosConfigurations;
-      };
-
-      # --------- Development Tools ---------
-      formatter = configLib.forAllSystems (pkgsSystem: self.packages.${pkgsSystem}.nixfmt-plus);
+  outputs = inputs@{ self, flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs self; } {
+      # Systems supported 
+      systems = [ "x86_64-linux" "aarch64-linux" ];
       
-      # Add deploy-rs checks
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
-    }
-    // flake-utils.lib.eachDefaultSystem (system: rec {
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ agenix-rekey.overlays.default ];
-      };
-      devShells.default = pkgs.mkShell {
-        packages = [
-          pkgs.agenix-rekey
-          pkgs.age-plugin-yubikey
-          pkgs.rage
-          deploy-rs.packages.${pkgs.system}.deploy-rs
-        ];
-      };
-    }) // {
-      # Make deploy-rs configuration a top-level output attribute
-      deploy = {
-        nodes = {
-          # Deploy configuration for sekio
-          sekio = {
-            hostname = "sekio.local";
-            sshUser = "gabehoban";
-            profiles = {
-              system = {
-                user = "root";
-                path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sekio;
-                sshOpts = [ "-t" ]; # Required for sudo password prompt
-                magicRollback = true; # Enable automatic rollback on failure
-                remoteBuild = false; # Build locally and push to target
-                autoRollback = true; # Automatically roll back on connection loss
-                confirmTimeout = 300; # 5 minute timeout for confirmation
-              };
-            };
-            fastConnection = false; # Optimize for slower connections
-          };
-        };
-      };
+      # Import flake-parts modules
+      imports = [
+        ./parts/devshells.nix
+        ./parts/packages.nix
+        ./parts/nixos-configs.nix
+        ./parts/overlays.nix
+        ./parts/images.nix
+        ./parts/agenix.nix
+        ./parts/deploy.nix
+      ];
     };
 
   nixConfig = {
