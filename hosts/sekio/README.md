@@ -13,7 +13,21 @@ This configuration creates a Raspberry Pi 4B headless server setup named "sekio"
 
 ## Special Configuration
 
-This setup includes a custom U-Boot configuration that ignores UART interrupts during boot, which prevents the GPS HAT from interfering with the boot process. The solution:
+This setup includes several special features:
+
+### SD Card Optimization
+
+The system uses several optimizations to extend SD card lifespan:
+
+1. System logs kept in memory with tmpfs
+2. ZRAM swap enabled instead of swap on disk
+3. Temporary files stored in RAM
+4. File system mounted with noatime option
+5. Weekly TRIM for flash storage
+
+### UART/GPS Configuration
+
+A custom U-Boot configuration ignores UART interrupts during boot, which prevents the GPS HAT from interfering with the boot process:
 
 1. Uses a custom U-Boot overlay with autoboot enabled
 2. Disables serial console on ttyAMA0/ttyS0
@@ -71,16 +85,31 @@ sudo dd if=./result/sd-image/*.img of=/dev/sdX bs=4M conv=fsync status=progress
 On first boot:
 1. Connect the Raspberry Pi to your network via Ethernet
 2. The system will be available as `sekio.local` on your network
-3. SSH into the server: `ssh root@sekio.local` (password: nixos)
-4. After accessing the system, apply the full configuration:
-   ```bash
-   cd /path/to/your/nixcfg/repo
-   git pull  # If needed to ensure you have the latest config
-   nixos-rebuild switch --flake .#sekio
-   ```
-5. The system will reconfigure with all security, GPS, and NTP settings
+3. SSH into the server: `ssh root@sekio.local` (password: Sekio-R00t-Init-2024)
 
-After running the nixos-rebuild command, the system will have:
+### Deploying Full Configuration
+
+After booting from the SD card image, deploy the full configuration:
+
+```bash
+# From your workstation
+colmena apply --on sekio
+```
+
+During deployment:
+1. System changes are applied based on the NixOS configuration
+2. The SD card optimizations are maintained to extend lifespan
+
+The system keeps these directories persistent across reboots:
+- /etc/ssh - SSH keys
+- /var/lib/chrony - NTP server state
+- /var/lib/gpsd - GPS daemon data
+- /var/lib/NetworkManager - Network configuration
+- /nix - The Nix store
+- /etc/machine-id - System identifier
+
+After deployment, the system will have:
+- U-Boot bootloader for improved reliability
 - Secure SSH configuration (password authentication disabled)
 - Firewall and fail2ban protection
 - All SD card optimizations 

@@ -3,6 +3,8 @@
 # Brief description of the module's purpose
 {
   pkgs,
+  config,
+  lib,
   ...
 }:
 
@@ -37,17 +39,13 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    # System-level persistence
-    directories = [
-      # Directories to persist
-    ];
-
-    # User-level persistence
-    users.username = {
-      directories = [
-        # User directories to persist
-      ];
-    };
-  };
+  # System-level persistence
+  impermanence.directories = [
+    # Directories to persist 
+  ];
+  
+  # User-level persistence
+  impermanence.users.username.directories = [
+    # User directories to persist
+  ];
 }

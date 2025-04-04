@@ -1,7 +1,7 @@
 # modules/applications/app-discord.nix
 #
 # Discord communication client with Vencord enhancements
-{ pkgs, ... }:
+{ pkgs, config, lib, ... }:
 {
   #
   # Discord installation
@@ -19,15 +19,13 @@
   #
   # Persistent configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      # Store Discord configurations in persistent storage
-      # Discord PTB configuration
-      ".config/discordptb"
-      # Regular Discord configuration (backup)
-      ".config/discord"
-      # Vencord plugin configuration
-      ".config/Vencord"
-    ];
-  };
+  impermanence.users.gabehoban.directories = [
+    # Store Discord configurations in persistent storage
+    # Discord PTB configuration
+    ".config/discordptb"
+    # Regular Discord configuration (backup)
+    ".config/discord"
+    # Vencord plugin configuration
+    ".config/Vencord"
+  ];
 }

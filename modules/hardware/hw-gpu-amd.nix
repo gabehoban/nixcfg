@@ -11,7 +11,7 @@
   #
   boot.initrd.kernelModules = [ "amdgpu" ];
   # Enable all power features and fix display timing issues
-  boot.kernelParams = [ 
+  boot.kernelParams = [
     "amdgpu.ppfeaturemask=0xffffffff"
     "amdgpu.dcfeaturemask=1"
     "amdgpu.asyncdma=0"

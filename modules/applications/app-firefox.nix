@@ -1,7 +1,7 @@
 # modules/applications/app-firefox.nix
 #
 # Firefox browser configuration with privacy-focused settings
-_: {
+{ config, lib, ... }: {
   programs.firefox = {
     enable = true;
 
@@ -115,10 +115,8 @@ _: {
   #
   # User profile persistence
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      ".mozilla" # Firefox profiles, settings, and extensions
-      ".cache/mozilla" # Firefox cache
-    ];
-  };
+  impermanence.users.gabehoban.directories = [
+    ".mozilla" # Firefox profiles, settings, and extensions
+    ".cache/mozilla" # Firefox cache
+  ];
 }

@@ -3,6 +3,7 @@
 # 1Password password manager configuration
 {
   lib,
+  config,
   ...
 }:
 {
@@ -33,12 +34,8 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban = {
-      directories = [
-        # Store 1Password configuration in persistent storage
-        ".config/1Password"
-      ];
-    };
-  };
+  impermanence.users.gabehoban.directories = [
+    # Store 1Password configuration in persistent storage
+    ".config/1Password"
+  ];
 }

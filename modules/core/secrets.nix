@@ -24,7 +24,7 @@
         pubkey = "age1yubikey1qfccny0m02fzfgtee8wu598587qesyu5972dem7drjteztl93qa8uuy4phd";
       }
     ];
-    
+
     # Store rekeyed secrets locally for each host
     storageMode = "local";
     localStorageDir = inputs.self.outPath + "/secrets/rekeyed/${config.networking.hostName}";

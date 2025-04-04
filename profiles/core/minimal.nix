@@ -23,9 +23,6 @@
     (configLib.moduleImport "network/basic.nix")
   ];
 
-  # Enable all firmware including non-free
-  hardware.enableAllFirmware = true;
-
-  # NixOS release version (do not change unless you know what you're doing)
-  system.stateVersion = "24.11";
+  # Enable non-free firmware
+  hardware.enableRedistributableFirmware = true;
 }

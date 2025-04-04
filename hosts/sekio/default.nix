@@ -1,51 +1,46 @@
+# hosts/sekio/default.nix
+#
+# Main configuration for the Sekio host (Raspberry Pi 4 with GPS)
 {
   configLib,
   inputs,
+  lib,
   ...
 }:
 {
   networking.hostName = "sekio";
-  
-  # Generate a proper unique host ID (replace with a real random value)
-  networking.hostId = "fe8e9a31";
-  
-  # Enable mDNS service for hostname.local discovery
-  # This configuration will override the initial image settings
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true; # Updated to newer option
-    ipv4 = true;
-    ipv6 = true;
-    publish = {
-      enable = true;
-      addresses = true;
-      domain = true;
-      workstation = true;
-    };
-  };
+  networking.hostId = "a7b92c14";
 
   imports = [
     # External modules
     inputs.home-manager.nixosModules.home-manager
-    inputs.impermanence.nixosModules.impermanence
-    
-    # Hardware configuration
+
+    # Core system modules
     (configLib.moduleImport "network/default.nix")
+    (configLib.moduleImport "core/git.nix")
+    (configLib.moduleImport "core/locale.nix")
+    (configLib.moduleImport "core/nix.nix")
+    # Only imported to provide the config.impermanence attribute
+    (configLib.moduleImport "core/impermanence.nix")
+    (configLib.moduleImport "core/packages.nix")
+    (configLib.moduleImport "core/secrets.nix")
+    (configLib.moduleImport "core/starship.nix")
+    (configLib.moduleImport "core/zsh.nix")
+
+    # Hardware 
     ./hardware
-    
-    # System configuration - use minimal profile
-    (configLib.profileImport "core/minimal.nix")
-    
-    # Additional services
+    (configLib.moduleImport "hardware/hw-platform-rpi.nix")
+
+    # Services
     (configLib.moduleImport "services/ssh.nix")
     (configLib.moduleImport "services/gpsd.nix")
     (configLib.moduleImport "services/chrony.nix")
     (configLib.moduleImport "services/gps-ntp-tools.nix")
-    (configLib.moduleImport "hardware/rpi-optimizations.nix")
-    
-    # Security configuration
+
+    # Host-specific configurations
     ./security.nix
-    
+    ./optimization.nix
+
     # User configuration
     (configLib.moduleImport "users/gabehoban.nix")
   ];
@@ -59,56 +54,19 @@
       inherit configLib;
     };
   };
-  
-  age.rekey.hostPubkey = "/persist/etc/ssh/ssh_host_ed25519_key.pub";
-  
-  # Enable Raspberry Pi firmware with specific configuration
+
+  # SSH host key for age encryption
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmlr0LtfwsOHLCmI87VUS8YqGWa/dKKWtQFGuvoH89E";
+
+  # Enable Raspberry Pi firmware
   hardware.enableRedistributableFirmware = true;
-  
-  # Explicitly disable WiFi
-  networking.wireless.enable = false;
-  
+
   # Enable GPS time synchronization with chrony
   services.chrony.enableGPS = true;
-  
-  # Enable GPS and NTP tools
-  services.gpsNtpTools.enable = true;
-  
-  # Use Raspberry Pi optimizations module for SD card write reduction
-  hardware.raspberry-pi = {
-    # Enable device tree support
-    "4".apply-overlays-dtmerge.enable = true;
-    
-    # SD card and power optimizations
-    optimizeForSD = true;
-    enableZramSwap = true;
-    volatileLogs = true;
-    enablePowerSaving = true;
-    
-    # Explicitly enable security features 
-    security = {
-      enableFirewall = true;
-      enableSSHHardening = true;
-      enableFail2ban = true;
-    };
-  };
-  
-  # TRIM is handled by optimizeForSD setting
-  
-  # Persistence configuration for important data
-  fileSystems."/persist" = {
-    device = "/dev/disk/by-label/NIXOS_DATA";
-    fsType = "ext4";
-    options = [ "noatime" ];
-    neededForBoot = true;
-  };
-  
-  environment.persistence."/persist" = {
-    directories = [
-      "/etc/ssh"
-      "/var/lib/chrony"
-      "/var/lib/gpsd"
-      "/var/lib/NetworkManager"
-    ];
-  };
+
+  # Enable device tree support
+  hardware.raspberry-pi."4".apply-overlays-dtmerge.enable = true;
+
+  # NixOS release version
+  system.stateVersion = "24.11";
 }

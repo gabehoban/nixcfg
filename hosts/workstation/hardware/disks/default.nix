@@ -81,6 +81,7 @@ _: {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/persist";
+            postCreateHook = "echo '/persist' > /etc/PERSIST_PATH";
           };
 
           # Home directories

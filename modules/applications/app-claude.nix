@@ -3,6 +3,8 @@
 # Claude AI client configuration
 {
   pkgs,
+  config,
+  lib,
   ...
 }:
 {
@@ -41,10 +43,8 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      # Persist Claude configuration across reboots
-      ".config/Claude"
-    ];
-  };
+  impermanence.users.gabehoban.directories = [
+    # Persist Claude configuration across reboots
+    ".config/Claude"
+  ];
 }

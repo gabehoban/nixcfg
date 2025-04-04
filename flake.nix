@@ -11,7 +11,7 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     impermanence.url = "github:nix-community/impermanence";
     flake-utils.url = "github:numtide/flake-utils";
-    
+
     # Remote deployment tools
     colmena = {
       url = "github:zhaofengli/colmena";
@@ -56,11 +56,17 @@
       chaotic,
       agenix-rekey,
       colmena,
+      # Hardware support
+      hardware,
+      # System management
+      # Boot security
+      # UI and customization
       ...
     }@inputs:
     let
       # --------- System Configuration ---------
-      system = "x86_64-linux";
+      # Default system architecture
+      defaultSystem = "x86_64-linux";
 
       # --------- Library Imports ---------
       inherit (self) outputs;
@@ -74,8 +80,8 @@
           outputs
           configLib
           nixpkgs
-          system
           ;
+        system = defaultSystem;
       };
     in
     {
@@ -88,7 +94,7 @@
             chaotic.nixosModules.default
           ];
         };
-        
+
         sekio = nixpkgs.lib.nixosSystem {
           inherit specialArgs;
           system = "aarch64-linux";
@@ -98,12 +104,17 @@
           ];
         };
       };
-      
+
       # --------- Colmena Configuration ---------
       colmena = {
         meta = {
+          # Support both architectures for deployment
+          systems = [
+            "x86_64-linux"
+            "aarch64-linux"
+          ];
           nixpkgs = import nixpkgs {
-            system = "x86_64-linux";
+            system = defaultSystem;
           };
           # Enable distributed builds for all nodes
           nodeNixSettings = {
@@ -121,25 +132,27 @@
             ];
           };
         };
-        
+
         # Define the sekio node for Colmena
-        sekio = { name, nodes, self, ... }: {
-          deployment = {
-            targetHost = "sekio.local";
-            targetUser = "gabehoban";  # Use non-root user with sudo privileges
-            sudo.enable = true;        # Use sudo for privileged operations
-            allowLocalDeployment = false;
-            buildOnTarget = false;
-            targetPlatform = "aarch64-linux";
-            remoteBuild = false;  # Build locally and push to target
+        sekio =
+          { self, ... }:
+          {
+            deployment = {
+              targetHost = "sekio.local";
+              targetUser = "gabehoban"; # Use non-root user with sudo privileges
+              sudo.enable = true; # Use sudo for privileged operations
+              allowLocalDeployment = false;
+              buildOnTarget = false;
+              targetPlatform = "aarch64-linux";
+              remoteBuild = false; # Build locally and push to target
+            };
+
+            imports = [
+              self.nixosConfigurations.sekio.config
+            ];
           };
-          
-          imports = [
-            self.nixosConfigurations.sekio.config
-          ];
-        };
       };
-      
+
       # --------- SD Card Images ---------
       images = {
         sekio = nixpkgs.lib.nixosSystem {
@@ -147,9 +160,42 @@
           modules = [
             "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
             (configLib.relativeToRoot "images/sekio.nix")
-            { nixpkgs.overlays = [ self.overlays.hardware ]; }
+            {
+              nixpkgs.overlays = [ self.overlays.hardware ];
+
+              # Override SD image parameters
+              # Use individual settings rather than a set
+              sdImage.firmwareSize = 128; # Increase boot partition size (MB)
+              sdImage.expandOnBoot = true; # Make sure SD card is expanded on first boot
+
+              # Root partition size is controlled by the default rootfs size
+              # We disable auto-resize since we'll be creating a state partition
+
+              # For initial boot, use extlinux which is compatible with the SD card
+              # The final system will switch to u-boot after installation
+              boot.loader.generic-extlinux-compatible.enable = true;
+            }
           ];
-          specialArgs = { inherit inputs outputs configLib; };
+          specialArgs = {
+            inherit inputs outputs configLib;
+            system = "aarch64-linux";
+          };
+        };
+
+        # Workstation installation ISO image
+        workstation-iso = nixpkgs.lib.nixosSystem {
+          system = defaultSystem;
+          modules = [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix"
+            (configLib.relativeToRoot "images/workstation.nix")
+            {
+              nixpkgs.overlays = [ self.overlays.default ];
+            }
+          ];
+          specialArgs = {
+            inherit inputs outputs configLib;
+            system = defaultSystem;
+          };
         };
       };
 
@@ -167,7 +213,7 @@
 
       agenix-rekey = agenix-rekey.configure {
         userFlake = self;
-        nixosConfigurations = self.nixosConfigurations;
+        inherit (self) nixosConfigurations;
       };
 
       # --------- Development Tools ---------

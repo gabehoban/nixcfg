@@ -15,9 +15,9 @@
 
     # GPU modules
     ./hw-gpu-amd.nix # AMD GPU drivers and configuration
-    
+
     # Platform-specific optimizations
-    ./rpi-optimizations.nix # Raspberry Pi optimizations
+    ./hw-platform-rpi.nix # Raspberry Pi optimizations
   ];
 
   # This module serves as an aggregator for hardware-specific configurations
@@ -29,6 +29,6 @@
   # 3. Import the new file in this default.nix
   #
   # For platform-specific configurations (like Raspberry Pi):
-  # - Use platform-specific modules like rpi-optimizations.nix
+  # - Use platform-specific modules like hw-platform-rpi.nix
   # - These can be selectively imported directly into host configurations
 }

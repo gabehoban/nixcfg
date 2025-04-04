@@ -28,4 +28,21 @@ in
   # Useful for organizing modules logically
   groupModules =
     baseDir: lib.mapAttrs (name: _: import (lib.path.append baseDir name)) (builtins.readDir baseDir);
+
+  # Helper function to check if impermanence is enabled in a host
+  hasImpermanence = config: 
+    config ? environment.persistence && builtins.typeOf config.environment.persistence == "set";
+    
+  # Helper to make an impermanence configuration conditional
+  # This creates a simple conditional attrset that only activates when impermanence is available
+  mkImpermanenceConfig = { 
+    directories ? [],
+    files ? [],
+    users ? {}
+  }: self: 
+    if self.hasImpermanence self.config then {
+      environment.persistence."/persist" = {
+        inherit directories files users;
+      };
+    } else {};
 }

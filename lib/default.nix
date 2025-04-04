@@ -39,6 +39,8 @@ in
     selectAttrs
     mergeModuleSets
     groupModules
+    hasImpermanence
+    mkImpermanenceConfig
     ;
 
   # Additional utility functions can be added here

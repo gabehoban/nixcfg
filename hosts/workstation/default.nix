@@ -56,11 +56,14 @@
     };
   };
 
-  age.rekey.hostPubkey = "/persist/etc/ssh/ssh_host_ed25519_key.pub";
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmlr0LtfwsOHLCmI87VUS8YqGWa/dKKWtQFGuvoH89E";
 
   # Enable AMD-specific firmware and drivers
   hardware.enableRedistributableFirmware = true;
-  
+
   # Enable cross-compilation support for Raspberry Pi (aarch64)
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
+  # NixOS release version
+  system.stateVersion = "24.11";
 }

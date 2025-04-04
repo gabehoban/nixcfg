@@ -7,7 +7,4 @@
 
   # Shell enhancements
   zsh-histdb-skim = pkgs.callPackage ./zsh-histdb-skim.nix { };
-
-  # Reserved for future packages
-  # example = pkgs.callPackage ./example.nix { };
 }

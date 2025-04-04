@@ -1,7 +1,7 @@
 # modules/applications/app-zed.nix
 #
 # Zed code editor configuration
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
   #
   # System-wide dependencies
@@ -92,10 +92,8 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      # Store Zed configuration in persistent storage
-      ".local/share/zed"
-    ];
-  };
+  impermanence.users.gabehoban.directories = [
+    # Store Zed configuration in persistent storage
+    ".local/share/zed"
+  ];
 }

@@ -3,6 +3,8 @@
 # GNOME desktop environment configuration
 {
   pkgs,
+  config,
+  lib,
   ...
 }:
 {
@@ -117,14 +119,12 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      ".config/autostart"
-      {
-        directory = ".local/share/keyrings";
-        mode = "0700";
-      }
-      ".local/share/gvfs-metadata"
-    ];
-  };
+  impermanence.users.gabehoban.directories = [
+    ".config/autostart"
+    {
+      directory = ".local/share/keyrings";
+      mode = "0700";
+    }
+    ".local/share/gvfs-metadata"
+  ];
 }

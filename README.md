@@ -29,7 +29,7 @@ nixcfg/
 - **Impermanence** - System state persistence where you want it, fresh boots where you don't
 - **Remote Deployment** - Build on powerful machines, deploy to resource-constrained devices
 - **Application Suite** - Curated selection including Firefox, Discord, 1Password, and more
-- **Secure Boot** - Lanzaboote integration for secure system startup
+- **Secure Boot** - Lanzaboote integration for secure system startup (see modules/core/boot.nix)
 
 ## 🚀 Getting Started
 

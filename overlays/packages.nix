@@ -11,10 +11,4 @@ in
 
   # Keep the customPackages attribute for reference
   inherit customPackages;
-
-  # Individual package overrides
-  # examplePackage = prev.examplePackage.override { ... };
-
-  # Package fixes and patches
-  # somePackage = prev.somePackage.overrideAttrs (old: { ... });
 }

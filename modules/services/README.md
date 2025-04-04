@@ -4,7 +4,6 @@ This directory contains modules for configuring system services and daemons.
 
 ## Modules
 
-- `ai.nix`: Configuration for AI-related services
 - `audio.nix`: Audio subsystem configuration (PipeWire, PulseAudio, etc.)
 - `chrony.nix`: NTP server/client with GPS integration for precise timekeeping
 - `gpsd.nix`: GPS daemon configuration for GPS hardware

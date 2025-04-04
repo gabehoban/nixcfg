@@ -3,6 +3,8 @@
 # Gaming support configuration (Steam, Proton, etc.)
 {
   pkgs,
+  config,
+  lib,
   ...
 }:
 {
@@ -63,16 +65,14 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban.directories = [
-      # Desktop shortcut and icon storage
-      ".local/share/applications"
-      ".local/share/icons/hicolor"
+  impermanence.users.gabehoban.directories = [
+    # Desktop shortcut and icon storage
+    ".local/share/applications"
+    ".local/share/icons/hicolor"
 
-      # Steam configuration and game library
-      ".steam"
-      ".local/share/CKAN"
-      ".local/share/Steam"
-    ];
-  };
+    # Steam configuration and game library
+    ".steam"
+    ".local/share/CKAN"
+    ".local/share/Steam"
+  ];
 }

@@ -87,8 +87,8 @@ The `default.nix` module in the hardware directory provides automatic hardware d
 
 When hardware-specific configuration is complex, consider:
 
-1. Creating a dedicated hardware profile in `profiles/hardware/`
-2. Adding appropriate hardware modules to that profile
+1. Creating a dedicated hardware module in `modules/hardware/`
+2. Including this module in the host configuration
 3. Documenting any special considerations or known issues
 
 ## Common Hardware Configuration Patterns

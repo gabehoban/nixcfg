@@ -1,4 +1,4 @@
-# Applications
+# Application Modules
 
 This directory contains modules for configuring specific applications for the system.
 

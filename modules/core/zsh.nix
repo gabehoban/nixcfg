@@ -4,6 +4,8 @@
 # Configures the Z shell with modern features and plugins
 {
   pkgs,
+  config,
+  lib,
   ...
 }:
 {
@@ -183,12 +185,8 @@
   #
   # Persistence configuration
   #
-  environment.persistence."/persist" = {
-    users.gabehoban = {
-      directories = [
-        # Directory for history files and SQLite database
-        ".local/share/zsh"
-      ];
-    };
-  };
+  impermanence.users.gabehoban.directories = [
+    # Directory for history files and SQLite database
+    ".local/share/zsh"
+  ];
 }

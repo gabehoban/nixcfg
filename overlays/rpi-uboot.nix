@@ -1,38 +1,27 @@
-{ pkgs, ... }:
-final: prev:
+_: _final: prev:
 
 {
-  # Override uboot for Raspberry Pi to ignore UART interrupts
-  # during boot process
+  # Override uboot for Raspberry Pi to fix boot issues and ignore UART interrupts
   ubootRaspberryPi4_64bit = prev.ubootRaspberryPi4_64bit.overrideAttrs (old: {
+    # Configure U-Boot to ignore serial input and auto-boot without waiting
     extraConfig = ''
-      # Ignore UART interrupts during boot process
       CONFIG_AUTOBOOT=y
-      CONFIG_AUTOBOOT_KEYED=y
-      CONFIG_AUTOBOOT_DELAY_STR=""
-      CONFIG_AUTOBOOT_STOP_STR=""
-      # Set boot delay to minimal value, but not zero
-      CONFIG_BOOTDELAY=1
-      # Ensure boot continues regardless of UART input
-      CONFIG_BOOT_RETRY_TIME=1
-      CONFIG_BOOT_RETRY_MIN=1
-      CONFIG_RESET_TO_RETRY=y
-      # Disable interactive boot
-      CONFIG_SILENT_CONSOLE=y
-      CONFIG_SILENT_U_BOOT_ONLY=y
+      CONFIG_BOOTDELAY=-2
     '';
 
-    # Apply patches if needed
-    patches = (old.patches or [ ]) ++ [
-      # Add any custom patches here if needed
-    ];
+    # Ensure patches don't interfere
+    patches = old.patches or [ ];
   });
 
   # Modify the module closure to allow missing modules during build
   # This is critical for cross-compilation of Raspberry Pi images
-  makeModulesClosure = args:
-    prev.makeModulesClosure (args // {
-      # Allow the build to continue even if some modules are missing
-      allowMissing = true;
-    });
+  makeModulesClosure =
+    args:
+    prev.makeModulesClosure (
+      args
+      // {
+        # Allow the build to continue even if some modules are missing
+        allowMissing = true;
+      }
+    );
 }
