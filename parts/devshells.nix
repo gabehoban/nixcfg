@@ -3,7 +3,7 @@
 # Development shells configuration for the flake
 { inputs, ... }: 
 {
-  perSystem = { config, self', inputs', pkgs, system, ... }: {
+  perSystem = { pkgs, system, ... }: {
     # Development shell for this project
     devShells.default = pkgs.mkShell {
       packages = [

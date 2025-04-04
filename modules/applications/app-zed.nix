@@ -1,7 +1,7 @@
 # modules/applications/app-zed.nix
 #
 # Zed code editor configuration
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 {
   #
   # System-wide dependencies

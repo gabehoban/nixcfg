@@ -10,15 +10,15 @@
       defaultSystem = "x86_64-linux";
       
       # Library imports
-      lib = inputs.nixpkgs.lib;
+      inherit (inputs.nixpkgs) lib;
       configLib = import ../lib { inherit lib inputs; };
       
       # Common arguments for system configuration
       mkArgs = system: {
         inherit inputs configLib;
         outputs = self;
-        nixpkgs = inputs.nixpkgs;
-        system = system;
+        inherit (inputs) nixpkgs;
+        inherit system;
       };
     in {
       # Workstation configuration (x86_64-linux)

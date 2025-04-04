@@ -1,7 +1,7 @@
 # hosts/sekio/optimization.nix
 #
 # SD card optimizations for Raspberry Pi
-{ lib, ... }:
+_:
 
 {
   # Use Raspberry Pi optimizations module for SD card write reduction

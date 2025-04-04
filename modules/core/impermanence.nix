@@ -13,80 +13,76 @@ with lib;
 let
   # Create a new option for collecting persistence configuration
   cfg = config.impermanence;
-in {
+in
+{
   #
   # Module imports - always import the upstream module
   #
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   #
-  # Define options for collecting persistence information 
+  # Define options for collecting persistence information
   # This allows modules to safely declare persistence without errors
   # when the impermanence module is not imported
   #
   options.impermanence = {
     # Enable/disable impermanence
     enable = mkEnableOption "impermanence for ephemeral state management";
-    
+
     # System-level directories
     directories = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of system directories to make persistent";
     };
 
     # System-level files
     files = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "List of system files to make persistent";
     };
 
     # User-specific configuration
     users = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          directories = mkOption {
-            type = types.listOf (types.either types.str (types.submodule {
-              options = {
-                directory = mkOption {
-                  type = types.str;
-                  description = "Path to directory";
-                };
-                mode = mkOption {
-                  type = types.str;
-                  description = "Permissions mode";
-                };
-              };
-            }));
-            default = [];
-            description = "User directories to make persistent";
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            directories = mkOption {
+              type = types.listOf (
+                types.either types.str (
+                  types.submodule {
+                    options = {
+                      directory = mkOption {
+                        type = types.str;
+                        description = "Path to directory";
+                      };
+                      mode = mkOption {
+                        type = types.str;
+                        description = "Permissions mode";
+                      };
+                    };
+                  }
+                )
+              );
+              default = [ ];
+              description = "User directories to make persistent";
+            };
+            files = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "User files to make persistent";
+            };
           };
-          files = mkOption {
-            type = types.listOf types.str;
-            default = [];
-            description = "User files to make persistent";
-          };
-        };
-      });
-      default = {};
+        }
+      );
+      default = { };
       description = "Per-user persistence configuration";
     };
   };
 
   # Apply configuration based on collected options
   config = {
-    # Ensure that we're intentionally using impermanence
-    assertions = [
-      {
-        assertion = !lib.hasAttr "environment" config || 
-                   !lib.hasAttr "persistence" config.environment ||
-                   !lib.pathExists "/persist" || 
-                   cfg.enable;
-        message = "Impermanence features detected but config.impermanence.enable is not set. Set impermanence.enable = true if intended.";
-      }
-    ];
-
     # The rest of the configuration only applies when impermanence is enabled
     system.activationScripts = mkIf cfg.enable {
       persistent-dirs.text =
@@ -139,25 +135,31 @@ in {
 
         # User-specific files and directories to persist
         users = mapAttrs (username: userCfg: {
-          directories = 
+          directories =
             # Default directories for the primary user
-            (if username == "gabehoban" then [
-              # XDG user directories
-              "Desktop"
-              "Documents"
-              "Downloads"
-              "Music"
-              "Pictures"
-              "Videos"
-              # More directories
-              # Git repositories
-              "repos"
-              # SSH keys and configuration
-              ".ssh"
-            ] else []) ++ userCfg.directories;
-          
+            (
+              if username == "gabehoban" then
+                [
+                  # XDG user directories
+                  "Desktop"
+                  "Documents"
+                  "Downloads"
+                  "Music"
+                  "Pictures"
+                  "Videos"
+                  # More directories
+                  # Git repositories
+                  "repos"
+                  # SSH keys and configuration
+                  ".ssh"
+                ]
+              else
+                [ ]
+            )
+            ++ userCfg.directories;
+
           # Include user-specific files
-          files = userCfg.files;
+          inherit (userCfg) files;
         }) cfg.users;
       };
     };

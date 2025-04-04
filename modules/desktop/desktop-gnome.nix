@@ -3,8 +3,6 @@
 # GNOME desktop environment configuration
 {
   pkgs,
-  config,
-  lib,
   ...
 }:
 {

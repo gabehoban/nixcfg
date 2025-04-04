@@ -1,7 +1,7 @@
 # modules/applications/app-discord.nix
 #
 # Discord communication client with Vencord enhancements
-{ pkgs, config, lib, ... }:
+{ pkgs, ... }:
 {
   #
   # Discord installation

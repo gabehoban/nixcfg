@@ -1,10 +1,7 @@
 # modules/core/direnv.nix
 #
 # direnv configuration to allow automatic environment switching
-{
-  pkgs,
-  ...
-}:
+_:
 {
   # System-wide direnv setup
   programs.direnv = {

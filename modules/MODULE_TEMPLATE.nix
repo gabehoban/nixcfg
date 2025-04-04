@@ -3,8 +3,6 @@
 # Brief description of the module's purpose
 {
   pkgs,
-  config,
-  lib,
   ...
 }:
 

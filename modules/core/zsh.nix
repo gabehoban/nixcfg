@@ -4,8 +4,6 @@
 # Configures the Z shell with modern features and plugins
 {
   pkgs,
-  config,
-  lib,
   ...
 }:
 {

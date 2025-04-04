@@ -3,8 +3,6 @@
 # GPS daemon service configuration for Raspberry Pi GPS HAT
 {
   pkgs,
-  config,
-  lib,
   ...
 }:
 

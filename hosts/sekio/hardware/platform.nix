@@ -1,7 +1,7 @@
 # hosts/sekio/hardware/platform.nix
 #
 # Raspberry Pi platform-specific settings for Sekio
-{ ... }:
+_:
 
 {
   # Configure additional GPIO/WiFi settings

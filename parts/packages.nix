@@ -1,9 +1,9 @@
 # parts/packages.nix
 #
 # Custom packages and formatter configuration
-{ inputs, ... }:
+_:
 {
-  perSystem = { config, self', inputs', pkgs, system, ... }: {
+  perSystem = { pkgs, ... }: {
     # Custom packages
     packages = import ../pkgs { inherit pkgs; };
     

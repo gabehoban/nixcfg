@@ -7,15 +7,15 @@
     # Image configurations
     images = let
       # Library imports
-      lib = inputs.nixpkgs.lib;
+      inherit (inputs.nixpkgs) lib;
       configLib = import ../lib { inherit lib inputs; };
       
       # Common arguments for image configuration
       mkArgs = system: {
         inherit inputs configLib;
         outputs = self;
-        nixpkgs = inputs.nixpkgs;
-        system = system;
+        inherit (inputs) nixpkgs;
+        inherit system;
       };
     in {
       # Sekio SD card image

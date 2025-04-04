@@ -1,7 +1,7 @@
 # modules/applications/app-firefox.nix
 #
 # Firefox browser configuration with privacy-focused settings
-{ config, lib, ... }: {
+_: {
   programs.firefox = {
     enable = true;
 

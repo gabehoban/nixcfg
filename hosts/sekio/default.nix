@@ -4,7 +4,6 @@
 {
   configLib,
   inputs,
-  lib,
   ...
 }:
 {

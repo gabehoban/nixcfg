@@ -3,8 +3,6 @@
 # Claude AI client configuration
 {
   pkgs,
-  config,
-  lib,
   ...
 }:
 {
