@@ -37,6 +37,7 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           extraPullNames: nix-community, chaotic-nyx
 
-      - name: "Build NixOS configs for: workstation"
+      - name: "Build NixOS configs for: workstation and sekio"
         run: |-
           nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
+          nix build --print-build-logs '.#nixosConfigurations.sekio.config.system.build.toplevel'

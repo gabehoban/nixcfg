@@ -99,9 +99,10 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Using version: ${VERSION}"
 
-      - name: Build workstation config
+      - name: Build workstation and sekio configs
         run: |
           nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
+          nix build --print-build-logs '.#nixosConfigurations.sekio.config.system.build.toplevel'
 
       - name: Generate CHANGELOG
         id: changelog
