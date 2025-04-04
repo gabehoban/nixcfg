@@ -54,7 +54,7 @@
   };
 
   # SSH host key for age encryption
-  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHtc5FwuWkORiGuDmr41ANqYoMTu6VX/kh03hldm1l35";
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO3hW/WSbP9HZZhHWJvCHEXyzwwLaHd2SVtHz9LBdYeH";
 
   # Enable Raspberry Pi firmware
   hardware.enableRedistributableFirmware = true;
