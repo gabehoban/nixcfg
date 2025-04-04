@@ -16,12 +16,12 @@
     nodes = {
       sekio = {
         hostname = "sekio.local";
-        sshUser = "gabehoban";
+        sshUser = "root";
         profiles = {
           system = {
             user = "root";
             path = inputs.deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sekio;
-            sshOpts = [ "-t" ]; # Required for sudo password prompt
+            sshOpts = [];
             magicRollback = true; 
             remoteBuild = false; 
             autoRollback = true;
