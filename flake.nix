@@ -94,9 +94,10 @@
       
       # --------- SD Card Images ---------
       images = {
-        sekio = import "${nixpkgs}/nixos/lib/make-system.nix" {
+        sekio = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           modules = [
+            "${nixpkgs.outPath}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
             (configLib.relativeToRoot "images/sekio.nix")
             { nixpkgs.overlays = [ self.overlays.hardware ]; }
           ];
