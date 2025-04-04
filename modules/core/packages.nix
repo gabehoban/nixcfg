@@ -73,6 +73,10 @@
     unzip
     zip
 
+    agenix-rekey
+    age-plugin-yubikey
+    rage
+
     # Media utilities
     yt-dlp # Media downloader
   ];

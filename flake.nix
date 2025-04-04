@@ -10,8 +10,17 @@
     # Framework & functionality modules
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     impermanence.url = "github:nix-community/impermanence";
+    flake-utils.url = "github:numtide/flake-utils";
 
     # Extended modules (with nixpkgs follows)
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    agenix-rekey = {
+      url = "github:oddlama/agenix-rekey";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,7 +46,9 @@
     {
       self,
       nixpkgs,
+      flake-utils,
       chaotic,
+      agenix-rekey,
       ...
     }@inputs:
     let
@@ -84,9 +95,28 @@
         import ./pkgs { inherit pkgs; }
       );
 
+      agenix-rekey = agenix-rekey.configure {
+        userFlake = self;
+        nixosConfigurations = self.nixosConfigurations;
+      };
+
       # --------- Development Tools ---------
       formatter = configLib.forAllSystems (pkgsSystem: self.packages.${pkgsSystem}.nixfmt-plus);
-    };
+    }
+    // flake-utils.lib.eachDefaultSystem (system: rec {
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ agenix-rekey.overlays.default ];
+      };
+      devShells.default = pkgs.mkShell {
+        packages = [
+          pkgs.agenix-rekey
+          pkgs.age-plugin-yubikey
+          pkgs.rage
+        ];
+      };
+    });
+
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org/"

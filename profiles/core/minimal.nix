@@ -15,6 +15,7 @@
     (configLib.moduleImport "core/locale.nix")
     (configLib.moduleImport "core/nix.nix")
     (configLib.moduleImport "core/packages.nix")
+    (configLib.moduleImport "core/secrets.nix")
     (configLib.moduleImport "core/starship.nix")
     (configLib.moduleImport "core/zsh.nix")
 

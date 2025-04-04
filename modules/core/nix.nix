@@ -3,6 +3,7 @@
 # Nix package manager configuration
 # Controls Nix behavior, optimization, and package settings
 {
+  inputs,
   outputs,
   ...
 }:
@@ -89,6 +90,7 @@
   nixpkgs = {
     # Apply custom overlays
     overlays = [
+      inputs.agenix-rekey.overlays.default
       outputs.overlays.additions
     ];
 

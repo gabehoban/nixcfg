@@ -1,7 +1,11 @@
 # modules/users/gabehoban.nix
 #
 # User configuration for gabehoban
-_: {
+{ config, ... }:
+{
+  age.secrets.hashed-root-password.rekeyFile = ../../secrets/hashed-root-password.age;
+  age.secrets.hashed-user-password.rekeyFile = ../../secrets/hashed-user-password.age;
+
   #
   # User account configuration
   #
@@ -27,7 +31,7 @@ _: {
         ];
 
         # Password hash for login
-        hashedPassword = "$7$CU..../....6H2Cxu.oYQY6HBpWe1OSG/$RnZAJioALqERJR6zUbApQWFbVWpmJNi4S/eo5KYM.G5";
+        hashedPasswordFile = config.age.secrets.hashed-user-password.path;
 
         # SSH configuration
         openssh = {
@@ -41,7 +45,7 @@ _: {
       # Root account configuration
       root = {
         isNormalUser = false;
-        hashedPassword = "$7$CU..../....t306LucALVXUzf9M43FqQ1$Pn2YxX4.TiCK9vaRRst7b6R2xxTeAARC1hxCZ1SBlu1";
+        hashedPasswordFile = config.age.secrets.hashed-root-password.path;
       };
     };
 

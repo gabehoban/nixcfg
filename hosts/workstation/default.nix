@@ -56,6 +56,8 @@
     };
   };
 
+  age.rekey.hostPubkey = "/persist/etc/ssh/ssh_host_ed25519_key.pub";
+
   # Enable AMD-specific firmware and drivers
   hardware.enableRedistributableFirmware = true;
 }
