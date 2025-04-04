@@ -10,8 +10,12 @@
   # Kernel and boot configuration
   #
   boot.initrd.kernelModules = [ "amdgpu" ];
-  # Enable all power features
-  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+  # Enable all power features and fix display timing issues
+  boot.kernelParams = [ 
+    "amdgpu.ppfeaturemask=0xffffffff"
+    "amdgpu.dcfeaturemask=1"
+    "amdgpu.asyncdma=0"
+  ];
 
   #
   # X11 and display drivers
