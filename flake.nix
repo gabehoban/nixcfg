@@ -105,28 +105,6 @@
         };
       };
 
-      # --------- Deploy-rs Configuration ---------
-      deploy = {
-        nodes = {
-          # Deploy configuration for sekio
-          sekio = {
-            hostname = "sekio.local";
-            sshUser = "gabehoban";
-            profiles = {
-              system = {
-                user = "root";
-                path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sekio;
-                sshOpts = [ "-t" ]; # Required for sudo password prompt
-                magicRollback = true; # Enable automatic rollback on failure
-                remoteBuild = false; # Build locally and push to target
-                autoRollback = true; # Automatically roll back on connection loss
-                confirmTimeout = 300; # 5 minute timeout for confirmation
-              };
-            };
-            fastConnection = false; # Optimize for slower connections
-          };
-        };
-      };
 
       # --------- SD Card Images ---------
       images = {
@@ -210,7 +188,30 @@
           deploy-rs.packages.${pkgs.system}.deploy-rs
         ];
       };
-    });
+    }) // {
+      # Make deploy-rs configuration a top-level output attribute
+      deploy = {
+        nodes = {
+          # Deploy configuration for sekio
+          sekio = {
+            hostname = "sekio.local";
+            sshUser = "gabehoban";
+            profiles = {
+              system = {
+                user = "root";
+                path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.sekio;
+                sshOpts = [ "-t" ]; # Required for sudo password prompt
+                magicRollback = true; # Enable automatic rollback on failure
+                remoteBuild = false; # Build locally and push to target
+                autoRollback = true; # Automatically roll back on connection loss
+                confirmTimeout = 300; # 5 minute timeout for confirmation
+              };
+            };
+            fastConnection = false; # Optimize for slower connections
+          };
+        };
+      };
+    };
 
   nixConfig = {
     extra-substituters = [
