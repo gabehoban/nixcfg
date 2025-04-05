@@ -88,13 +88,6 @@
               status = "disabled";
             };
           };
-
-          fragment@1 {
-            target = <&bluetooth>;
-            __overlay__ {
-              status = "disabled";
-            };
-          };
         };
       '';
     }

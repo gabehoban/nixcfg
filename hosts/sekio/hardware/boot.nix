@@ -58,7 +58,7 @@ in
       efi.canTouchEfiVariables = true;
 
       # Keep configuration history limited
-      generic-extlinux-compatible.configurationLimit = 3;
+      generic-extlinux-compatible.configurationLimit = 1;
     };
 
     # Console log verbosity
