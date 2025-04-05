@@ -10,13 +10,13 @@
 }:
 
 let
-  # Access existing values if they exist, or use defaults  
+  # Access existing values if they exist, or use defaults
   enabled = config.impermanence.enable or false;
-  
+
   # Access user-defined directories and files to persist
-  extraDirs = config.impermanence.directories or [];
-  extraFiles = config.impermanence.files or [];
-  userConfigs = config.impermanence.users or {};
+  extraDirs = config.impermanence.directories or [ ];
+  extraFiles = config.impermanence.files or [ ];
+  userConfigs = config.impermanence.users or { };
 in
 {
   # Import the upstream module

@@ -1,7 +1,7 @@
 # hosts/sekio/hardware/rpi-config.nix
 #
 # Sekio-specific Raspberry Pi hardware configuration
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     libraspberrypi

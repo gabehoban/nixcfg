@@ -11,10 +11,10 @@
   imports = [
     # Basic hardware detection
     (modulesPath + "/installer/scan/not-detected.nix")
-    
+
     # Raspberry Pi hardware support
     inputs.hardware.nixosModules.raspberry-pi-4
-    
+
     # Modularized hardware configuration
     ./boot.nix
     ./filesystems.nix

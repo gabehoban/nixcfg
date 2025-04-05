@@ -32,8 +32,8 @@
     # This makes the device appear in "Network" sections of file browsers
     publish = {
       enable = true;
-      addresses = true;  # Share IP addresses
-      domain = true;     # Share domain information
+      addresses = true; # Share IP addresses
+      domain = true; # Share domain information
       workstation = true; # Identify as a workstation
     };
 

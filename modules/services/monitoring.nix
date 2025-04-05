@@ -1,34 +1,41 @@
 # modules/services/monitoring.nix
 #
 # System monitoring with Prometheus and Grafana
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   enabled = config.services.monitoring.enable or false;
-  prometheus = config.services.monitoring.prometheus or {
-    enable = enabled;
-    exporters = {
-      node = {
-        enable = true;
-        openFirewall = false;
-        port = 9100;
-      };
-      chrony = {
-        enable = config.services.chrony.enable or false;
-        openFirewall = false;
-        port = 9123;
-      };
-      gpsd = {
-        enable = config.services.gpsd.enable or false;
+  prometheus =
+    config.services.monitoring.prometheus or {
+      enable = enabled;
+      exporters = {
+        node = {
+          enable = true;
+          openFirewall = false;
+          port = 9100;
+        };
+        chrony = {
+          enable = config.services.chrony.enable or false;
+          openFirewall = false;
+          port = 9123;
+        };
+        gpsd = {
+          enable = config.services.gpsd.enable or false;
+        };
       };
     };
-  };
-  
-  grafana = config.services.monitoring.grafana or {
-    enable = false;
-    openFirewall = false;
-  };
-  
+
+  grafana =
+    config.services.monitoring.grafana or {
+      enable = false;
+      openFirewall = false;
+    };
+
   gpsdServiceEnabled = config.services.gpsd.enable or false;
   chronyServiceEnabled = config.services.chrony.enable or false;
 in
@@ -119,21 +126,36 @@ in
     # Node exporter for system metrics
     services.prometheus.exporters.node = lib.mkIf prometheus.exporters.node.enable {
       enable = true;
-      openFirewall = prometheus.exporters.node.openFirewall;
-      port = prometheus.exporters.node.port;
+      inherit (prometheus.exporters.node) openFirewall;
+      inherit (prometheus.exporters.node) port;
       enabledCollectors = [
-        "systemd" "filesystem" "meminfo" "netdev" "netstat" 
-        "stat" "time" "diskstats" "interrupts" "ksmd" 
-        "logind" "loadavg" "entropy" "cpu" "cpufreq" 
-        "textfile" "bonding" "hwmon" "thermal_zone"
+        "systemd"
+        "filesystem"
+        "meminfo"
+        "netdev"
+        "netstat"
+        "stat"
+        "time"
+        "diskstats"
+        "interrupts"
+        "ksmd"
+        "logind"
+        "loadavg"
+        "entropy"
+        "cpu"
+        "cpufreq"
+        "textfile"
+        "bonding"
+        "hwmon"
+        "thermal_zone"
       ];
     };
 
     # NTP timing metrics
     services.prometheus.exporters.chrony = lib.mkIf prometheus.exporters.chrony.enable {
       enable = true;
-      openFirewall = prometheus.exporters.chrony.openFirewall;
-      port = prometheus.exporters.chrony.port;
+      inherit (prometheus.exporters.chrony) openFirewall;
+      inherit (prometheus.exporters.chrony) port;
     };
 
     # GPSD metrics collection for timing quality
@@ -142,38 +164,44 @@ in
       after = [ "gpsd.service" ];
       requires = [ "gpsd.service" ];
       startAt = "*:0/1";
-      path = with pkgs; [ gawk gnugrep gnused gpsd coreutils ];
-      
+      path = with pkgs; [
+        gawk
+        gnugrep
+        gnused
+        gpsd
+        coreutils
+      ];
+
       script = ''
         METRICS_DIR="/var/lib/prometheus-node-exporter/textfile-collector"
         mkdir -p "$METRICS_DIR"
-        
+
         TMPFILE=$(mktemp)
-        
+
         echo "# HELP gpsd_satellites_visible Current number of visible GPS satellites" > $TMPFILE
         echo "# TYPE gpsd_satellites_visible gauge" >> $TMPFILE
-        
+
         SAT_COUNT=$(gpspipe -w -n 10 | grep -m 1 '"satellites":' | awk -F'[:,]' '{print $2}')
         if [ -n "$SAT_COUNT" ]; then
           echo "gpsd_satellites_visible $SAT_COUNT" >> $TMPFILE
         else
           echo "gpsd_satellites_visible 0" >> $TMPFILE
         fi
-        
+
         echo "# HELP gpsd_has_fix Whether GPSD has a valid fix (1=yes, 0=no)" >> $TMPFILE
         echo "# TYPE gpsd_has_fix gauge" >> $TMPFILE
-        
+
         FIX_MODE=$(gpspipe -w -n 10 | grep -m 1 '"mode":' | awk -F'[:,]' '{print $2}')
         if [ "$FIX_MODE" -gt 1 ] 2>/dev/null; then
           echo "gpsd_has_fix 1" >> $TMPFILE
         else
           echo "gpsd_has_fix 0" >> $TMPFILE
         fi
-        
+
         mv $TMPFILE "$METRICS_DIR/gpsd.prom"
         chmod 644 "$METRICS_DIR/gpsd.prom"
       '';
-      
+
       serviceConfig = {
         Type = "oneshot";
         User = "root";
@@ -183,9 +211,11 @@ in
     };
 
     # Create directory for metrics
-    systemd.tmpfiles.rules = lib.mkIf (prometheus.exporters.node.enable && prometheus.exporters.gpsd.enable) [
-      "d /var/lib/prometheus-node-exporter/textfile-collector 0755 root root -"
-    ];
+    systemd.tmpfiles.rules =
+      lib.mkIf (prometheus.exporters.node.enable && prometheus.exporters.gpsd.enable)
+        [
+          "d /var/lib/prometheus-node-exporter/textfile-collector 0755 root root -"
+        ];
 
     # Grafana configuration
     services.grafana = lib.mkIf grafana.enable {

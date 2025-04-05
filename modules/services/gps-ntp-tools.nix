@@ -2,20 +2,19 @@
 #
 # GPS and NTP related tools for monitoring and diagnostics
 # Flattened module that installs tools and monitoring services for GPS/NTP
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 # Direct configuration that is applied when this module is imported
 let
   # Check if required services are enabled
   gpsdEnabled = config.services.gpsd.enable or false;
   chronyEnabled = config.services.chrony.enable or false;
-  
+
   # Default values
   statusInterval = 300; # 5 minutes
   logRetention = 7; # days
   reportDirectory = "/var/lib/gps-ntp-monitor";
-  autoRecovery = true;
-  
+
   # Helper function to create a properly escaped shell script
   gpsStatusScript = pkgs.writeShellScriptBin "gps-ntp-status" ''
     #!/bin/bash
@@ -140,11 +139,11 @@ let
     echo -e "''${BLUE}= End of Status Report            =''${NC}"
     echo -e "''${BLUE}====================================''${NC}"
   '';
-  
+
   # Recovery service script
   monitorScript = pkgs.writeShellScript "gps-ntp-monitor" ''
     #!/bin/bash
-    
+
     # Function to check and restart a service if needed
     check_and_restart() {
       local service=$1
@@ -169,7 +168,7 @@ let
         fi
       fi
     }
-    
+
     # Main monitoring loop
     while true; do
       # Check GPS service
@@ -220,7 +219,7 @@ in
     # Terminal UI tools
     htop # Process monitoring
     iotop # I/O monitoring
-    
+
     # Status script
     gpsStatusScript
   ];
@@ -228,30 +227,33 @@ in
   # Add automatic recovery service
   systemd.services.gps-ntp-monitor = {
     description = "GPS and NTP Monitoring and Recovery Service";
-    
+
     # Run after GPS and chrony are started
-    after = [ "gpsd.service" "chrony.service" ];
-    
+    after = [
+      "gpsd.service"
+      "chrony.service"
+    ];
+
     # Make sure it's restarted if it fails
     startLimitIntervalSec = 300;
     startLimitBurst = 5;
-    
+
     serviceConfig = {
       Type = "simple";
       Restart = "on-failure";
       RestartSec = "30s";
       ExecStart = "${monitorScript}";
-      
+
       # Security settings
       User = "root";
       ProtectSystem = "strict";
       ProtectHome = true;
       PrivateTmp = true;
     };
-    
+
     wantedBy = [ "multi-user.target" ];
   };
-  
+
   # Create the report directory
   systemd.tmpfiles.rules = [
     "d ${reportDirectory} 0755 root root ${toString logRetention}d"

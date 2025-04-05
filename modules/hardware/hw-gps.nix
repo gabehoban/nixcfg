@@ -2,7 +2,12 @@
 #
 # GPS hardware support with PPS timing for stratum 1 NTP servers
 # Configures kernel modules, UART settings, and GPIO for precise timing signals
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # UART configuration for GPS module communication
@@ -10,9 +15,9 @@
     # Set high baud rate for GPS module and redirect console away from UART
     kernelParams = [
       "init_uart_baud=115200" # Match GPS module's serial speed
-      "console=tty0"          # Redirect console to HDMI/display instead of UART
+      "console=tty0" # Redirect console to HDMI/display instead of UART
     ];
-    
+
     # Load kernel modules required for PPS timing
     kernelModules = [
       "pps_gpio" # Pulse-per-second signal via GPIO pins
@@ -33,7 +38,7 @@
   services.gpsd = {
     enable = true;
     devices = [ "/dev/ttyAMA0" ]; # UART device for GPS NMEA data
-    readonly = false;             # Allow configuration of the GPS device
+    readonly = false; # Allow configuration of the GPS device
   };
 
   # PPS timing on GPIO pin 18 - only apply on Raspberry Pi hardware
@@ -89,7 +94,7 @@
 
   # Essential tools for GPS configuration and debugging
   environment.systemPackages = with pkgs; [
-    gpsd       # GPS daemon and client tools
-    pps-tools  # PPS monitoring and testing utilities
+    gpsd # GPS daemon and client tools
+    pps-tools # PPS monitoring and testing utilities
   ];
 }

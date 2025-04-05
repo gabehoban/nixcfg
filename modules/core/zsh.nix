@@ -24,7 +24,7 @@
   #
   home-manager.users.gabehoban = {
     # Additional packages specific to shell environment
-    home.packages = [ 
+    home.packages = [
       pkgs.sqlite-interactive
       pkgs.any-nix-shell # Allow nix-shell to work with zsh
     ];
@@ -137,7 +137,7 @@
         setopt always_to_end    # Move cursor to end after completion
 
         export GPG_TTY=`tty`
-        
+
         # Initialize any-nix-shell and hook it into zsh
         any-nix-shell zsh --info-right | source /dev/stdin
       '';

@@ -3,8 +3,6 @@
 # Stratum 1 NTP server using GPS for timing (Raspberry Pi 4)
 {
   configLib,
-  inputs,
-  lib,
   ...
 }:
 {

@@ -18,21 +18,22 @@
 
 let
   # Access existing values if they exist, or use defaults
-  cfg = config.modules.network.firewall or {
-    enable = true;
-    openPorts = [];
-    openTcpPorts = [];
-    openUdpPorts = [];
-    allowPing = true;
-    limitPingRate = true;
-    pingRateLimit = "5/second";
-    logRefusedConnections = false;
-    defaultPolicy = "drop";
-    enableAntiSpoofing = true;
-    extraCommands = "";
-    rules = {};
-    zones = {};
-  };
+  cfg =
+    config.modules.network.firewall or {
+      enable = true;
+      openPorts = [ ];
+      openTcpPorts = [ ];
+      openUdpPorts = [ ];
+      allowPing = true;
+      limitPingRate = true;
+      pingRateLimit = "5/second";
+      logRefusedConnections = false;
+      defaultPolicy = "drop";
+      enableAntiSpoofing = true;
+      extraCommands = "";
+      rules = { };
+      zones = { };
+    };
 in
 {
   # Define the options interface for host-level customization
@@ -84,19 +85,23 @@ in
       default = false;
       description = "Whether to log refused connections.";
     };
-    
+
     defaultPolicy = mkOption {
-      type = types.enum [ "accept" "drop" "reject" ];
+      type = types.enum [
+        "accept"
+        "drop"
+        "reject"
+      ];
       default = "drop";
       description = "Default policy for traffic not matching any rules.";
     };
-    
+
     enableAntiSpoofing = mkOption {
       type = types.bool;
       default = true;
       description = "Enable anti-spoofing protection.";
     };
-    
+
     extraCommands = mkOption {
       type = types.lines;
       default = "";
@@ -194,7 +199,7 @@ in
   config = {
     # Disable NixOS default firewall in favor of nixos-nftables-firewall
     networking.firewall.enable = lib.mkForce false;
-    
+
     # Enable anti-spoofing protection if configured
     networking.firewall.checkReversePath = cfg.enableAntiSpoofing;
 
@@ -213,7 +218,7 @@ in
 
     # Configure nftables firewall
     networking.nftables.firewall = {
-      enable = cfg.enable;
+      inherit (cfg) enable;
 
       # Create merged rules: default rules plus user-defined rules
       rules = {
@@ -239,13 +244,17 @@ in
         ping = lib.mkIf cfg.allowPing {
           from = "all";
           to = [ "fw" ];
-          extraLines = if cfg.limitPingRate then [
-            "ip6 nexthdr icmpv6 icmpv6 type { echo-request } limit rate ${cfg.pingRateLimit} accept"
-            "ip protocol icmp icmp type { echo-request } limit rate ${cfg.pingRateLimit} accept"
-          ] else [
-            "ip6 nexthdr icmpv6 icmpv6 type { echo-request } accept"
-            "ip protocol icmp icmp type { echo-request } accept"
-          ];
+          extraLines =
+            if cfg.limitPingRate then
+              [
+                "ip6 nexthdr icmpv6 icmpv6 type { echo-request } limit rate ${cfg.pingRateLimit} accept"
+                "ip protocol icmp icmp type { echo-request } limit rate ${cfg.pingRateLimit} accept"
+              ]
+            else
+              [
+                "ip6 nexthdr icmpv6 icmpv6 type { echo-request } accept"
+                "ip protocol icmp icmp type { echo-request } accept"
+              ];
         };
 
         # Log dropped packets rule (controlled by logRefusedConnections option)
@@ -260,7 +269,7 @@ in
       } // cfg.rules; # Merge with user-defined rules
 
       # Add all user-defined zones
-      zones = cfg.zones;
+      inherit (cfg) zones;
 
       # Enable common snippets for basic functionality but
       # disable the ICMP and drop snippets as we handle them ourselves

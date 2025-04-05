@@ -32,19 +32,19 @@
   boot = {
     # Early boot modules needed to access storage and peripherals
     initrd.availableKernelModules = [
-      "nvme"     # Required for NVMe SSD support
+      "nvme" # Required for NVMe SSD support
       "xhci_pci" # Required for USB 3.x ports
-      "ahci"     # Required for SATA drives
-      "usbhid"   # Required for USB input devices during early boot
-      "sd_mod"   # Support for SD cards if needed
+      "ahci" # Required for SATA drives
+      "usbhid" # Required for USB input devices during early boot
+      "sd_mod" # Support for SD cards if needed
     ];
-    
+
     # No extra initrd modules needed
     initrd.kernelModules = [ ];
-    
+
     # Load KVM module for AMD virtualization support
-    kernelModules = [ "kvm-amd" ]; 
-    
+    kernelModules = [ "kvm-amd" ];
+
     # No extra out-of-tree kernel modules needed
     extraModulePackages = [ ];
 
@@ -76,7 +76,7 @@
   # Enable DHCP by default on all interfaces
   # NetworkManager will manage specific interface configuration
   networking.useDHCP = lib.mkDefault true;
-  
+
   # Previous interfaces kept as reference for future network configs
   # These are commented out as NetworkManager handles them dynamically
   # networking.interfaces.docker0.useDHCP = lib.mkDefault true;

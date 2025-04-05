@@ -42,7 +42,7 @@
   #
   environment.systemPackages = with pkgs; [
     pulseaudio # Includes pactl and other utilities for system integration
-    pamixer    # Simple CLI mixer for quick volume adjustments
+    pamixer # Simple CLI mixer for quick volume adjustments
     pavucontrol # GUI mixer for more detailed audio routing
   ];
 }

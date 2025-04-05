@@ -101,7 +101,7 @@ in
       max-free = 2000000000;
 
       # Build optimization settings
-      cores = buildSettings.cores;
+      inherit (buildSettings) cores;
       max-jobs = buildSettings.maxJobs;
       use-xdg-base-directories = true;
 

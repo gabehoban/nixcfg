@@ -6,17 +6,17 @@
     # Core dependencies
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hardware.url = "github:NixOS/nixos-hardware";
-    
+
     # Flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-utils.url = "github:numtide/flake-utils";
-    
+
     # Deploy-rs with flake-parts
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     # No external flake-parts modules needed
 
     # Framework & functionality modules
@@ -57,11 +57,15 @@
   };
 
   # ==================== OUTPUTS ====================
-  outputs = inputs@{ self, flake-parts, ... }:
+  outputs =
+    inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs self; } {
-      # Systems supported 
-      systems = [ "x86_64-linux" "aarch64-linux" ];
-      
+      # Systems supported
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+
       # Import flake-parts modules
       imports = [
         ./parts/devshells.nix

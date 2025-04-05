@@ -2,13 +2,13 @@
 #
 # General optimizations for Raspberry Pi devices to improve reliability and performance
 # This is a flattened module that applies all optimizations directly when imported
-{ config, lib, ... }:
+_:
 
 # Fully flattened direct configuration with all optimizations enabled by default
 {
   # Define a flag that can be checked by other modules to detect Raspberry Pi platform
   # (Using an empty attrset that can be checked with `hasAttrByPath` or `?` operator)
-  hardware.raspberry-pi = {};
+  hardware.raspberry-pi = { };
 
   # SD card write reduction optimizations
   boot.tmp.useTmpfs = true;
@@ -24,7 +24,7 @@
         "mode=1777"
       ];
     };
-    
+
     # Volatile logs in RAM
     "/var/log" = {
       device = "tmpfs";
@@ -90,7 +90,7 @@
 
       # Additional security settings
       X11Forwarding = false;
-      MaxAuthTries = 12;  # Increased to allow more authentication attempts
+      MaxAuthTries = 12; # Increased to allow more authentication attempts
       LoginGraceTime = 20;
     };
   };

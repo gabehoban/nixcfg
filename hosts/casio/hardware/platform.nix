@@ -2,7 +2,7 @@
 #
 # Raspberry Pi hardware optimizations for NTP server functionality
 # Disables unused wireless interfaces and configures UART for GPS
-{ config, lib, ... }:
+_:
 
 {
   # Disable onboard wireless interfaces to:
@@ -26,7 +26,7 @@
   # This is critical as the GPS module requires dedicated access to
   # the primary UART (ttyAMA0) for reliable timing signals
   systemd.services."serial-getty@ttyAMA0".enable = false; # Primary UART
-  systemd.services."serial-getty@ttyS0".enable = false;   # Alias for ttyAMA0
+  systemd.services."serial-getty@ttyS0".enable = false; # Alias for ttyAMA0
   systemd.services."serial-getty@serial0".enable = false; # Physical port mapping
   systemd.services."serial-getty@serial1".enable = false; # Secondary UART
 

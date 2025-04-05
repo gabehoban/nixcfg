@@ -59,7 +59,7 @@
   # Home-manager configuration
   # ───────────────────────────────────────────
   home-manager = {
-    useGlobalPkgs = true;  # Uses the system's nixpkgs, so don't set nixpkgs options in home-manager
+    useGlobalPkgs = true; # Uses the system's nixpkgs, so don't set nixpkgs options in home-manager
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs;

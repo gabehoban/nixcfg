@@ -2,11 +2,6 @@
 #
 # SD card image for sekio NTP server
 {
-  config,
-  configLib,
-  pkgs,
-  lib,
-  inputs,
   ...
 }:
 {
