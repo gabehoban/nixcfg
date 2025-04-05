@@ -1,6 +1,7 @@
 # modules/services/chrony.nix
 #
 # Chrony NTP server configuration with GPS/PPS integration
+# Flattened module that directly applies configuration
 {
   config,
   lib,
@@ -8,41 +9,62 @@
   ...
 }:
 
-with lib;
-
+# Direct configuration with customization options
 let
-  cfg = config.services.chrony;
+  # Access existing values if they exist, or use defaults
+  enableGPS = config.services.chrony.enableGPS or false;
+  
+  # Default networks that are allowed to use this NTP server
+  allowedNetworks = config.services.chrony.allowedNetworks or [
+    "192.168.1.0/24" # DMZ
+    "10.32.10.0/24" # VLAN10 - Trusted
+    "10.32.20.0/24" # VLAN20 - Guest
+    "10.32.30.0/24" # VLAN30 - IOT
+    "10.32.40.0/24" # VLAN40 - Servers
+    "10.32.50.0/24" # VLAN50 - Video
+  ];
+  
+  # Default public NTP servers to use as initial time source
+  publicServers = config.services.chrony.publicServers or [
+    "time.apple.com"
+    "time.nist.gov"
+    "time.cloudflare.com"
+  ];
 in
 {
-  options = {
-    services.chrony = {
-      enableGPS = mkEnableOption "GPS/PPS integration with chrony";
+  # Maintain the option interface for backward compatibility and host configuration
+  options.services.chrony = with lib; {
+    enableGPS = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable GPS/PPS integration with chrony";
+    };
 
-      allowedNetworks = mkOption {
-        type = types.listOf types.str;
-        default = [
-          "192.168.1.0/24" # DMZ
-          "10.32.10.0/24" # VLAN10 - Trusted
-          "10.32.20.0/24" # VLAN20 - Guest
-          "10.32.30.0/24" # VLAN30 - IOT
-          "10.32.40.0/24" # VLAN40 - Servers
-          "10.32.50.0/24" # VLAN50 - Video
-        ];
-        description = "Networks that are allowed to use this NTP server";
-      };
+    allowedNetworks = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "192.168.1.0/24" # DMZ
+        "10.32.10.0/24" # VLAN10 - Trusted
+        "10.32.20.0/24" # VLAN20 - Guest
+        "10.32.30.0/24" # VLAN30 - IOT
+        "10.32.40.0/24" # VLAN40 - Servers
+        "10.32.50.0/24" # VLAN50 - Video
+      ];
+      description = "Networks that are allowed to use this NTP server";
+    };
 
-      publicServers = mkOption {
-        type = types.listOf types.str;
-        default = [
-          "time.apple.com"
-          "time.nist.gov"
-          "time.cloudflare.com"
-        ];
-        description = "Public NTP servers to use as initial time source";
-      };
+    publicServers = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "time.apple.com"
+        "time.nist.gov"
+        "time.cloudflare.com"
+      ];
+      description = "Public NTP servers to use as initial time source";
     };
   };
 
+  # Direct implementation
   config = {
     # Create directory structure for chrony
     systemd.tmpfiles.rules = [
@@ -81,11 +103,11 @@ in
         ratelimit interval 1 burst 16 leak 2
 
         #[-] Allow all client connections from internal nets [-]#
-        ${concatMapStrings (net: "allow ${net}\n") cfg.allowedNetworks}
+        ${lib.concatMapStrings (net: "allow ${net}\n") allowedNetworks}
         # Network QoS Code
         dscp 48
 
-        ${optionalString cfg.enableGPS ''
+        ${lib.optionalString enableGPS ''
           #[-] Configure stratum 1 sources [-]#
           # GPS Serial data reference (NMEA data shared by GPSD via SHM)
           refclock SHM 0 refid NMEA offset 0.0339 precision 1e-3 poll 3 noselect
@@ -94,7 +116,7 @@ in
         ''}
 
         #[-] Public servers to set as initial time source [-]#
-        ${concatMapStrings (server: "server ${server} iburst\n") cfg.publicServers}
+        ${lib.concatMapStrings (server: "server ${server} iburst\n") publicServers}
       '';
     };
 
@@ -103,10 +125,26 @@ in
       chrony
     ];
 
-    # Directories configured above
+    # Configure firewall to allow NTP traffic if the NFT-based firewall is enabled
+    modules.network.firewall.rules = lib.mkIf (config.modules.network.firewall.enable or false) {
+      ntp = {
+        from = map (net: "ntp-${net}") allowedNetworks;
+        to = [ "fw" ];
+        allowedUDPPorts = [ 123 ]; # NTP uses UDP port 123
+      };
+    };
+
+    # Define NTP zones for each allowed network
+    modules.network.firewall.zones = lib.mkIf (config.modules.network.firewall.enable or false) 
+      (lib.listToAttrs (map (net: {
+        name = "ntp-${net}";
+        value = {
+          ipv4Addresses = [ net ];
+        };
+      }) allowedNetworks));
 
     # Configure persistence for chrony data
-    impermanence.directories = [
+    impermanence.directories = lib.mkIf (config.impermanence.enable or false) [
       "/var/lib/chrony" # For drift file and time measurements
       "/var/log/chrony" # For log files
       # Not persisting /etc/chrony since its config is managed by NixOS

@@ -43,20 +43,29 @@
     # ───────────────────────────────────────────
     (configLib.moduleImport "users/gabehoban.nix")
   ];
-  
+
   # Enable impermanence for ephemeral system state
   impermanence.enable = true;
+
+  # ───────────────────────────────────────────
+  # Network and Security Configuration
+  # ───────────────────────────────────────────
+  # Enable the NFT-based firewall with default settings
+  modules.network.firewall = {
+    enable = true;
+  };
 
   # ───────────────────────────────────────────
   # Home-manager configuration
   # ───────────────────────────────────────────
   home-manager = {
-    useGlobalPkgs = true;
+    useGlobalPkgs = true;  # Uses the system's nixpkgs, so don't set nixpkgs options in home-manager
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs;
       inherit configLib;
     };
+    # Note: When using useGlobalPkgs, don't set any nixpkgs options in home-manager modules
   };
 
   age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmlr0LtfwsOHLCmI87VUS8YqGWa/dKKWtQFGuvoH89E";

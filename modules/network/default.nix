@@ -1,19 +1,23 @@
 # modules/network/default.nix
 #
-# Combined networking module
-# Imports all networking configurations
+# Combined networking module - imports all networking configurations
+# Flattened module with direct imports and network definitions
 {
   lib,
   config,
   ...
 }:
+
 {
+  # Import all network-related modules
   imports = [
     # Basic networking configuration
     ./basic.nix
+    # NFT-based firewall
+    ./firewall.nix
   ];
 
-  # Network configuration options for clarity and centralization
+  # Define trusted networks for use throughout the configuration
   options.networking.trusted = {
     networks = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
@@ -25,9 +29,8 @@
     };
   };
 
-  # Apply the configuration
+  # Apply the configuration - make trusted networks available throughout the configuration
   config = {
-    # Make trusted networks available throughout the configuration
     _module.args.trustedNetworks = config.networking.trusted.networks;
   };
 }

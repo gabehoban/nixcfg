@@ -2,9 +2,71 @@
 
 This document describes the common patterns and conventions used in module implementation across this NixOS configuration.
 
-## Module Structure
+## Flattened Module Pattern
 
-All modules follow a consistent structure:
+All modules in this system follow the "flattened module" pattern. This means that modules apply their configuration directly when imported, rather than exposing options that need to be set elsewhere.
+
+### What is a Flattened Module?
+
+A flattened module:
+- Applies configuration directly when imported
+- Does not define options
+- Uses conditional logic when needed
+- Is simpler and more direct than traditional NixOS modules
+
+### Flattened vs. Traditional Modules
+
+#### Traditional NixOS Module Pattern (AVOID):
+
+```nix
+{ config, lib, pkgs, ... }:
+
+let
+  cfg = config.modules.myModule;
+in
+{
+  # Define options
+  options.modules.myModule = {
+    enable = lib.mkEnableOption "My feature";
+    setting1 = lib.mkOption { ... };
+    setting2 = lib.mkOption { ... };
+  };
+
+  # Apply configuration conditionally based on options
+  config = lib.mkIf cfg.enable {
+    # Implementation using cfg.setting1, cfg.setting2, etc.
+  };
+}
+```
+
+#### Flattened Module Pattern (PREFERRED):
+
+```nix
+{ config, lib, pkgs, ... }:
+
+# Direct configuration with no options
+{
+  # Directly applied when imported
+  services.myService.enable = true;
+  environment.systemPackages = with pkgs; [ package1 package2 ];
+  
+  # Use conditional logic when needed
+  services.dependent = lib.mkIf (config.services.required.enable or false) {
+    enable = true;
+  };
+}
+```
+
+### Benefits of Flattened Modules
+
+1. **Simplicity**: Clearer relationship between importing a module and what it does
+2. **Reduced Boilerplate**: No need for options and conditional logic in most modules
+3. **Improved Readability**: Host configurations are easier to understand
+4. **Reduced Repetition**: No need to both import a module and enable its functionality
+
+### Module Structure
+
+All modules follow this structure:
 
 ```nix
 # modules/category/module-name.nix
@@ -13,7 +75,13 @@ All modules follow a consistent structure:
 { config, lib, pkgs, ... }:
 
 {
-  # Module implementation
+  # Direct configuration (applied when imported)
+  services.something.enable = true;
+  
+  # Conditional configuration when needed
+  services.dependent = lib.mkIf (config.services.required.enable or false) {
+    enable = true;
+  };
 }
 ```
 

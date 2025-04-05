@@ -11,7 +11,7 @@ modules/hardware/
 ├── default.nix                # Core hardware detection and configuration
 ├── hw-cpu-amd.nix             # AMD CPU-specific configuration
 ├── hw-gpu-amd.nix             # AMD GPU-specific configuration
-├── rpi-optimizations.nix      # Raspberry Pi optimizations
+├── hw-platform-rpi.nix        # Raspberry Pi optimizations
 └── HARDWARE_CONFIG.md         # This documentation file
 ```
 

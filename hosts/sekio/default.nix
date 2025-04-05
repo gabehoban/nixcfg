@@ -1,15 +1,21 @@
 # hosts/sekio/default.nix
 #
-# Main configuration for the Sekio host (Raspberry Pi 4 with GPS)
+# Stratum 1 NTP server using GPS for timing (Raspberry Pi 4)
 {
   configLib,
   inputs,
+  lib,
   ...
 }:
 {
-  networking.hostName = "sekio";
-  networking.hostId = "a7b92c14";
+  networking = {
+    hostName = "sekio";
+    hostId = "a7b92c14";
+  };
 
+  # ───────────────────────────────────────────
+  # Module Imports
+  # ───────────────────────────────────────────
   imports = [
     # External modules
     inputs.home-manager.nixosModules.home-manager
@@ -28,12 +34,14 @@
     # Hardware
     ./hardware
     (configLib.moduleImport "hardware/hw-platform-rpi.nix")
+    (configLib.moduleImport "hardware/hw-gps.nix")
 
     # Services
     (configLib.moduleImport "services/ssh.nix")
     (configLib.moduleImport "services/gpsd.nix")
     (configLib.moduleImport "services/chrony.nix")
     (configLib.moduleImport "services/gps-ntp-tools.nix")
+    (configLib.moduleImport "services/gps-monitoring.nix")
 
     # Host-specific configurations
     ./security.nix
@@ -43,7 +51,9 @@
     (configLib.moduleImport "users/gabehoban.nix")
   ];
 
-  # Home-manager configuration
+  # ───────────────────────────────────────────
+  # Home-Manager Configuration
+  # ───────────────────────────────────────────
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -53,21 +63,34 @@
     };
   };
 
+  # ───────────────────────────────────────────
+  # Security Settings
+  # ───────────────────────────────────────────
   # SSH host key for age encryption
-  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAIaE/fnTZFlw/JxvSzW23PCi7gO0yFWDwurCyxVUr3O";
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJco2ctNIBP1fph74SCE6LMv8oKF1PYjRupAmbC6pdd3";
 
-  # Enable Raspberry Pi firmware
+  # ───────────────────────────────────────────
+  # Hardware Configuration
+  # ───────────────────────────────────────────
   hardware.enableRedistributableFirmware = true;
-
-  # Enable GPS time synchronization with chrony
-  services.chrony.enableGPS = true;
-
-  # Enable device tree support
   hardware.raspberry-pi."4".apply-overlays-dtmerge.enable = true;
 
-  # Enable impermanence for ephemeral system state
+  # ───────────────────────────────────────────
+  # Service Configuration
+  # ───────────────────────────────────────────
+  # Enable GPS time synchronization
+  services.chrony.enableGPS = true;
+
+  # ───────────────────────────────────────────
+  # Network and Security Configuration
+  # ───────────────────────────────────────────
+  modules.network.firewall.enable = true;
+
+  # ───────────────────────────────────────────
+  # System Configuration
+  # ───────────────────────────────────────────
+  # Persistent storage needed for accurate timekeeping
   impermanence.enable = false;
 
-  # NixOS release version
   system.stateVersion = "24.11";
 }

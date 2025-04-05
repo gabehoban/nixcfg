@@ -1,49 +1,31 @@
-# modules/category/module-name.nix
+# modules/[MODULE_PATH].nix
 #
-# Brief description of the module's purpose
+# [MODULE_NAME]: [SHORT_DESCRIPTION]
+# [LONGER_DESCRIPTION_IF_NEEDED - WHY THIS MODULE EXISTS]
+{ config, lib, pkgs, ... }:
+
+# This module follows the flattened pattern - configuration is applied directly when imported
 {
-  pkgs,
-  ...
-}:
-
-{
-  #
-  # Main configuration section
-  #
-  setting = {
-    # Configuration with explanatory comments
-    option1 = true;
-    option2 = "value";
-  };
-
-  #
-  # Secondary configuration section
-  #
-  another = {
-    # More configuration
-    some = "value";
-  };
-
-  #
-  # Package definitions
-  #
-  environment.systemPackages = with pkgs; [
-    # Packages listed alphabetically or by function
-    # with comments explaining non-obvious packages
-    package1
-    package2
-  ];
-
-  #
-  # Persistence configuration
-  #
-  # System-level persistence
-  impermanence.directories = [
-    # Directories to persist 
-  ];
+  # Core implementation
+  # service.example = {
+  #   enable = true;
+  #   # Additional settings...
+  # };
   
-  # User-level persistence
-  impermanence.users.username.directories = [
-    # User directories to persist
-  ];
+  # Conditional configuration - only apply when dependencies exist
+  # Prefer 'or false' pattern for defensive programming when checking optional config
+  # services.dependent = lib.mkIf (config.services.required.enable or false) {
+  #   enable = true;
+  # };
+  
+  # Check for platform/hardware features using hasAttr pattern when necessary
+  # hardware.specialFeature = lib.mkIf (config.hardware ? platform-type) {
+  #   # Platform-specific settings...
+  # };
+  
+  # Include packages related to this functionality
+  # environment.systemPackages = with pkgs; [
+  #   package1    # Purpose of this package
+  #   package2    # Why this package is included
+  # ];
 }

@@ -1,8 +1,14 @@
-{ config, ... }: {
-  # Custom Raspberry Pi configuration for boot
-  # Using generic-extlinux instead of U-Boot (configured in hardware/default.nix)
+# hosts/sekio/hardware/rpi-config.nix
+#
+# Sekio-specific Raspberry Pi hardware configuration
+{ config, pkgs, ... }:
+{
+  environment.systemPackages = with pkgs; [
+    libraspberrypi
+    raspberrypi-eeprom
+  ];
 
-  # Add custom device tree settings
+  # RTC on I2C bus for timekeeping backup
   hardware.deviceTree.overlays = [
     {
       name = "i2c-rtc";
@@ -31,100 +37,24 @@
         };
       '';
     }
-    {
-      name = "pps-gpio";
-      dtsText = ''
-        /dts-v1/;
-        /plugin/;
-
-        / {
-          compatible = "raspberrypi,4-model-b";
-
-          fragment@0 {
-            target-path = "/";
-            __overlay__ {
-              pps {
-                compatible = "pps-gpio";
-                gpios = <&gpio 18 0>;
-                status = "okay";
-              };
-            };
-          };
-        };
-      '';
-    }
-    # Enable UART interface
-    {
-      name = "enable-uart";
-      dtsText = ''
-        /dts-v1/;
-        /plugin/;
-
-        / {
-          compatible = "raspberrypi,4-model-b";
-
-          fragment@0 {
-            target = <&uart0>;
-            __overlay__ {
-              status = "okay";
-            };
-          };
-        };
-      '';
-    }
-    # Disable Bluetooth to free up UART
+    # Bluetooth disabled to free UART for GPS
     {
       name = "disable-bt";
-      dtsText = ''
-        /dts-v1/;
-        /plugin/;
-
-        / {
-          compatible = "raspberrypi,4-model-b";
-
-          fragment@0 {
-            target = <&uart1>;
-            __overlay__ {
-              status = "disabled";
-            };
-          };
-        };
-      '';
+      dtboFile = ./overlays/disable-bt.dtbo;
     }
   ];
 
-  # Make sure the I2C interface is available
-  # This is needed for the RTC
+  # Enable I2C for RTC connection
   hardware.i2c.enable = true;
-
-  # Additional configurations for the Raspberry Pi via device tree
-  # (apply-overlays-dtmerge.enable is set in default.nix)
   hardware.deviceTree.filter = "bcm2711-rpi-4-*.dtb";
-  
-  # Consolidated kernel parameters for the Raspberry Pi
+
+  # Kernel parameters optimized for GPS timing accuracy
   boot.kernelParams = [
-    # Enable UART hardware but disable Bluetooth
-    "enable_uart=1"
-    "dtoverlay=disable-bt"
-    # Use only the display console, not the UART/serial console
-    # but keep UART hardware enabled for GPS
     "console=tty0"
-
-    # Disable console on UART but keep hardware enabled
-    "consoleblank=0" # Prevent console blanking
-    "quiet" # Reduce boot messages
-    "loglevel=3" # Only show important messages
-
-    # Disable serial console explicitly
-    "earlycon=off" # Disable early serial console
-
-    # Serial port settings for GPS
-    "uart_baud=115200"
-
-    # Disable dynamic ticks for better timing accuracy
+    "consoleblank=0"
+    "init_uart_baud=115200"
+    "8250.nr_uarts=1"
     "nohz=off"
-
-    # Add basic Pi4 video console parameters
     "video=HDMI-A-1:1280x720@60"
   ];
 }

@@ -6,6 +6,7 @@ This directory contains configurations for building NixOS installation images fo
 
 - `default.nix`: Common image configuration and helper functions
 - `workstation.nix`: Workstation-specific installation image
+- `sekio.nix`: Raspberry Pi SD card image for Sekio
 
 ## Building Images
 

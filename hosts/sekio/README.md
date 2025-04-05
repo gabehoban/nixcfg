@@ -111,7 +111,7 @@ The system keeps these directories persistent across reboots:
 After deployment, the system will have:
 - U-Boot bootloader for improved reliability
 - Secure SSH configuration (password authentication disabled)
-- Firewall and fail2ban protection
+- Firewall protection
 - All SD card optimizations 
 - Proper GPS and NTP service configuration
 

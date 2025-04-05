@@ -1,138 +1,97 @@
 # modules/hardware/hw-platform-rpi.nix
 #
 # General optimizations for Raspberry Pi devices to improve reliability and performance
+# This is a flattened module that applies all optimizations directly when imported
+{ config, lib, ... }:
+
+# Fully flattened direct configuration with all optimizations enabled by default
 {
-  config,
-  lib,
-  ...
-}:
+  # Define a flag that can be checked by other modules to detect Raspberry Pi platform
+  # (Using an empty attrset that can be checked with `hasAttrByPath` or `?` operator)
+  hardware.raspberry-pi = {};
 
-with lib;
+  # SD card write reduction optimizations
+  boot.tmp.useTmpfs = true;
 
-let
-  cfg = config.hardware.raspberry-pi;
-in
-{
-  options.hardware.raspberry-pi = {
-    optimizeForSD = mkEnableOption "Enable SD card write reduction optimizations";
-
-    enableZramSwap = mkEnableOption "Enable ZRAM for swap to reduce SD card wear";
-
-    volatileLogs = mkEnableOption "Keep all logs in memory to reduce SD card writes";
-
-    enablePowerSaving = mkEnableOption "Enable power-saving features";
-
-    security = {
-      enableFirewall = mkEnableOption "Enable basic firewall settings";
-      enableSSHHardening = mkEnableOption "Enable SSH hardening measures";
+  # Reduce writes to the SD card by keeping temporary files in RAM
+  fileSystems = {
+    "/tmp" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      options = [
+        "defaults"
+        "size=512M"
+        "mode=1777"
+      ];
+    };
+    
+    # Volatile logs in RAM
+    "/var/log" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      options = [
+        "defaults"
+        "size=128M"
+        "mode=755"
+      ];
     };
   };
 
-  config = mkMerge [
-    # SD card write reduction optimizations
-    (mkIf cfg.optimizeForSD {
-      # Mount temporary filesystems in RAM
-      boot.tmp.useTmpfs = true;
+  # Setup automatic TRIM for flash storage if supported
+  services.fstrim = {
+    enable = true;
+    interval = "weekly";
+  };
 
-      # Reduce writes to the SD card by keeping temporary files in RAM
-      fileSystems = {
-        "/tmp" = {
-          device = "tmpfs";
-          fsType = "tmpfs";
-          options = [
-            "defaults"
-            "size=512M"
-            "mode=1777"
-          ];
-        };
-      };
+  # ZRAM swap configuration
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50; # Use 50% of RAM for compressed swap
+  };
 
-      # Setup automatic TRIM for flash storage if supported
-      services.fstrim = {
-        enable = true;
-        interval = "weekly";
-      };
-    })
+  # Configure journald to store logs in RAM
+  services.journald.extraConfig = ''
+    Storage=volatile
+    RuntimeMaxUse=32M
+    SystemMaxUse=32M
+  '';
 
-    # ZRAM swap configuration
-    (mkIf cfg.enableZramSwap {
-      zramSwap = {
-        enable = true;
-        algorithm = "zstd";
-        memoryPercent = 50; # Use 50% of RAM for compressed swap
-      };
-    })
+  # Power saving options
+  powerManagement.cpuFreqGovernor = "ondemand";
 
-    # Volatile logs configuration
-    (mkIf cfg.volatileLogs {
-      # Keep logs in RAM
-      fileSystems."/var/log" = {
-        device = "tmpfs";
-        fsType = "tmpfs";
-        options = [
-          "defaults"
-          "size=128M"
-          "mode=755"
-        ];
-      };
+  # USB power saving
+  boot.kernelParams = [ "usbcore.autosuspend=1" ];
 
-      # Configure journald to store logs in RAM
-      services.journald.extraConfig = ''
-        Storage=volatile
-        RuntimeMaxUse=32M
-        SystemMaxUse=32M
-      '';
-    })
+  # Power off USB devices when not in use
+  services.udev.extraRules = ''
+    # Power off USB devices when not in use
+    ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="auto"
+  '';
 
-    # Power saving options
-    (mkIf cfg.enablePowerSaving {
-      # CPU frequency scaling
-      powerManagement.cpuFreqGovernor = "ondemand";
+  # Security: Firewall
+  modules.network.firewall = {
+    enable = true; # Use new NFT-based firewall
+    # SSH is enabled by default, no need to specify port 22
+    # Allow ping
+    allowPing = true;
+    # Log all denied packets
+    logRefusedConnections = true;
+  };
 
-      # USB power saving
-      boot.kernelParams = [
-        "usbcore.autosuspend=1"
-      ];
+  # Security: SSH hardening
+  services.openssh = {
+    settings = {
+      # Disable root login completely
+      PermitRootLogin = "no";
 
-      # Power off USB devices when not in use
-      services.udev.extraRules = ''
-        # Power off USB devices when not in use
-        ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="auto"
-      '';
-    })
+      # Disable password authentication, use keys only
+      PasswordAuthentication = false;
 
-    # Security: Firewall
-    (mkIf cfg.security.enableFirewall {
-      networking.firewall = {
-        enable = lib.mkForce true; # Override default setting from network module
-        allowedTCPPorts = [
-          22 # SSH
-        ];
-        # Allow ping
-        allowPing = true;
-        # Log all denied packets
-        logRefusedConnections = true;
-      };
-    })
-
-    # Security: SSH hardening
-    (mkIf cfg.security.enableSSHHardening {
-      services.openssh = {
-        settings = {
-          # Disable root login completely
-          PermitRootLogin = "no";
-
-          # Disable password authentication, use keys only
-          PasswordAuthentication = false;
-
-          # Additional security settings
-          X11Forwarding = false;
-          MaxAuthTries = 12;  # Increased to allow more authentication attempts
-          LoginGraceTime = 20;
-        };
-      };
-    })
-
-    # Security: No fail2ban as per project requirements
-  ];
+      # Additional security settings
+      X11Forwarding = false;
+      MaxAuthTries = 12;  # Increased to allow more authentication attempts
+      LoginGraceTime = 20;
+    };
+  };
 }

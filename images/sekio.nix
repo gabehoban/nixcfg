@@ -13,9 +13,13 @@ let
   timeoutStr = if blCfg.timeout == null then "-1" else toString blCfg.timeout;
   builderScript = "${inputs.nixpkgs}/nixos/modules/system/boot/loader/generic-extlinux-compatible/extlinux-conf-builder.sh";
   fixedBuilderScriptName = "extlinux-conf-builder-no-interaction.sh";
+  # Create a modified U-Boot builder script that ignores UART input
+  # This is critical for GPS module compatibility since the GPS sends data on the UART
+  # that would otherwise interfere with the bootloader menu
   fixedBuilderScript = pkgs.runCommand fixedBuilderScriptName { } ''
     (
     set -x
+    # Modify the script to comment out TIMEOUT and menu lines that wait for input
     ${pkgs.perl}/bin/perl -pe 's/^((?:TIMEOUT|menu).*)$/# $1 # commented to ignore UART input during boot/g' ${builderScript} > $out
     )
   '';

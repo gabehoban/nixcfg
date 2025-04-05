@@ -1,6 +1,7 @@
 # modules/core/impermanence.nix
 #
 # Persistent storage configuration for ephemeral NixOS systems
+# This flattened module configures impermanence for persistent state management
 {
   inputs,
   config,
@@ -8,26 +9,27 @@
   ...
 }:
 
-with lib;
-
 let
-  # Create a new option for collecting persistence configuration
-  cfg = config.impermanence;
+  # Access existing values if they exist, or use defaults  
+  enabled = config.impermanence.enable or false;
+  
+  # Access user-defined directories and files to persist
+  extraDirs = config.impermanence.directories or [];
+  extraFiles = config.impermanence.files or [];
+  userConfigs = config.impermanence.users or {};
 in
 {
-  #
-  # Module imports - always import the upstream module
-  #
+  # Import the upstream module
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
-  #
-  # Define options for collecting persistence information
-  # This allows modules to safely declare persistence without errors
-  # when the impermanence module is not imported
-  #
-  options.impermanence = {
+  # Define options for customization in host configurations
+  options.impermanence = with lib; {
     # Enable/disable impermanence
-    enable = mkEnableOption "impermanence for ephemeral state management";
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable impermanence for ephemeral state management";
+    };
 
     # System-level directories
     directories = mkOption {
@@ -81,87 +83,78 @@ in
     };
   };
 
-  # Apply configuration based on collected options
-  config = {
-    # The rest of the configuration only applies when impermanence is enabled
-    system.activationScripts = mkIf cfg.enable {
-      persistent-dirs.text =
-        let
-          # Create home directory persistence links for each user
-          mkHomePersist =
-            user:
-            lib.optionalString user.createHome ''
-              mkdir -p /persist/${user.home}
-              chown ${user.name}:${user.group} /persist/${user.home}
-              chmod ${user.homeMode} /persist/${user.home}
-            '';
-          users = lib.attrValues config.users.users;
-        in
-        lib.concatLines (map mkHomePersist users);
-    };
+  # Direct implementation
+  config = lib.mkIf enabled {
+    # Create home directory persistence links for each user
+    system.activationScripts.persistent-dirs.text =
+      let
+        mkHomePersist =
+          user:
+          lib.optionalString user.createHome ''
+            mkdir -p /persist/${user.home}
+            chown ${user.name}:${user.group} /persist/${user.home}
+            chmod ${user.homeMode} /persist/${user.home}
+          '';
+        users = lib.attrValues config.users.users;
+      in
+      lib.concatLines (map mkHomePersist users);
 
-    #
-    # Persistent file and directory configuration
-    #
-    # Only apply the collected persistence configuration if enabled and
-    # environment.persistence is available (impermanence is imported)
-    environment.persistence = mkIf (cfg.enable && config ? environment.persistence) {
-      "/persist" = {
-        # Hide bind mounts from user tools
-        hideMounts = true;
+    # Configure persistent storage
+    environment.persistence."/persist" = {
+      # Hide bind mounts from user tools
+      hideMounts = true;
 
-        # System-level directories to persist
-        directories = [
-          # Network configuration - only connection profiles
-          "/etc/NetworkManager/system-connections"
-          # Secure boot key management
-          "/var/lib/sbctl"
-          # Systemd state (logs, timers, etc.)
-          "/var/lib/systemd"
-          # NixOS state
-          "/var/lib/nixos"
-          # Note: /etc/nixos removed as it's managed by the NixOS system itself
-        ] ++ cfg.directories;
+      # System-level directories to persist
+      directories = [
+        # Network configuration - only connection profiles
+        "/etc/NetworkManager/system-connections"
+        # Secure boot key management
+        "/var/lib/sbctl"
+        # Systemd state (logs, timers, etc.)
+        "/var/lib/systemd"
+        # NixOS state
+        "/var/lib/nixos"
+        # Note: /etc/nixos removed as it's managed by the NixOS system itself
+      ] ++ extraDirs;
 
-        # System-level files to persist
-        files = [
-          # Stable machine identifier
-          "/etc/machine-id"
-          # SSH host key
-          "/etc/ssh/ssh_host_ed25519_key"
-          # SSH host public key
-          "/etc/ssh/ssh_host_ed25519_key.pub"
-        ] ++ cfg.files;
+      # System-level files to persist
+      files = [
+        # Stable machine identifier
+        "/etc/machine-id"
+        # SSH host key
+        "/etc/ssh/ssh_host_ed25519_key"
+        # SSH host public key
+        "/etc/ssh/ssh_host_ed25519_key.pub"
+      ] ++ extraFiles;
 
-        # User-specific files and directories to persist
-        users = mapAttrs (username: userCfg: {
-          directories =
-            # Default directories for the primary user
-            (
-              if username == "gabehoban" then
-                [
-                  # XDG user directories
-                  "Desktop"
-                  "Documents"
-                  "Downloads"
-                  "Music"
-                  "Pictures"
-                  "Videos"
-                  # More directories
-                  # Git repositories
-                  "repos"
-                  # SSH keys and configuration
-                  ".ssh"
-                ]
-              else
-                [ ]
-            )
-            ++ userCfg.directories;
+      # User-specific files and directories to persist
+      users = lib.mapAttrs (username: userCfg: {
+        directories =
+          # Default directories for the primary user
+          (
+            if username == "gabehoban" then
+              [
+                # XDG user directories
+                "Desktop"
+                "Documents"
+                "Downloads"
+                "Music"
+                "Pictures"
+                "Videos"
+                # More directories
+                # Git repositories
+                "repos"
+                # SSH keys and configuration
+                ".ssh"
+              ]
+            else
+              [ ]
+          )
+          ++ userCfg.directories;
 
-          # Include user-specific files
-          inherit (userCfg) files;
-        }) cfg.users;
-      };
+        # Include user-specific files
+        inherit (userCfg) files;
+      }) userConfigs;
     };
   };
 }

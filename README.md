@@ -1,6 +1,6 @@
 # ✨ My NixOS Config! ✨
 
-[![ci-badge](https://img.shields.io/static/v1?label=Built%20with&message=nix&color=blue&style=flat&logo=nixos&link=https://nixos.org&labelColor=111212)](https://gvolpe.com)
+[![ci-badge](https://img.shields.io/static/v1?label=Built%20with&message=nix&color=blue&style=flat&logo=nixos&link=https://nixos.org&labelColor=111212)](https://nixos.org)
 [![Build](https://github.com/gabehoban/nixcfg/actions/workflows/build.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/build.yml)
 [![Validate](https://github.com/gabehoban/nixcfg/actions/workflows/validate.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/validate.yml)
 [![Update](https://github.com/gabehoban/nixcfg/actions/workflows/update.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/update.yml)
@@ -39,23 +39,23 @@ nixcfg/
 # Switch to workstation configuration
 nixos-rebuild switch --flake .#workstation
 
-# Deploy to sekio using Colmena
-colmena apply --on sekio
+# Deploy to sekio using deploy-rs
+deploy -s .#sekio
 ```
 
 ### Remote Deployment
 
-This repository uses [Colmena](https://github.com/zhaofengli/colmena) for remote deployment of the Raspberry Pi configuration, which builds the system on the more powerful workstation and deploys to the Pi.
+This repository uses [deploy-rs](https://github.com/serokell/deploy-rs) for remote deployment of the Raspberry Pi configuration, which builds the system on the more powerful workstation and deploys to the Pi.
 
 ```bash
 # Build and deploy sekio configuration
-colmena apply --on sekio
+deploy -s .#sekio
 
-# Build only without deploying
-colmena build --on sekio
+# Check for configuration issues without deploying
+deploy check
 
-# Build and check what would change, without applying
-colmena apply --dry-run --on sekio
+# See what would change without deploying
+deploy -s .#sekio --dry-run
 ```
 
 ### Customizing for Your Machine
@@ -64,7 +64,7 @@ colmena apply --dry-run --on sekio
 2. Set up hardware configs in `hosts/your-machine/hardware/`
 3. Create a `default.nix` that imports the modules and profiles you need
 4. Add your machine to `flake.nix` under `nixosConfigurations`
-5. Optionally add your machine to the Colmena configuration
+5. Optionally add your machine to the deploy-rs configuration in parts/deploy.nix
 
 ## 🧰 Working with Modules
 
