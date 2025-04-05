@@ -25,7 +25,6 @@ in
     security = {
       enableFirewall = mkEnableOption "Enable basic firewall settings";
       enableSSHHardening = mkEnableOption "Enable SSH hardening measures";
-      enableFail2ban = mkEnableOption "Enable Fail2ban for SSH protection";
     };
   };
 
@@ -128,24 +127,12 @@ in
 
           # Additional security settings
           X11Forwarding = false;
-          MaxAuthTries = 3;
+          MaxAuthTries = 12;  # Increased to allow more authentication attempts
           LoginGraceTime = 20;
         };
       };
     })
 
-    # Security: Fail2ban
-    (mkIf cfg.security.enableFail2ban {
-      services.fail2ban = {
-        enable = true;
-        # Use settings format to be compatible with NixOS module
-        jails.sshd.settings = {
-          enabled = true;
-          maxretry = 5;
-          findtime = 600;
-          bantime = 600;
-        };
-      };
-    })
+    # Security: No fail2ban as per project requirements
   ];
 }

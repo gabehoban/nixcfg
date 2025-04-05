@@ -13,7 +13,6 @@
   hardware.raspberry-pi.security = {
     enableFirewall = true;
     enableSSHHardening = true;
-    enableFail2ban = true;
   };
 
   # SSH security enhancements specific to this host
@@ -55,23 +54,7 @@
     logRefusedPackets = true;
   };
 
-  # Add fail2ban for SSH protection - only applied if not enabled by the platform module
-  services.fail2ban = lib.mkIf (!config.hardware.raspberry-pi.security.enableFail2ban) {
-    enable = true;
-    # Define trusted networks
-    ignoreIP = [
-      trustedNetworks.loopback
-      trustedNetworks.homeNetwork
-    ];
-    # Configure the jail
-    jails.sshd.settings = {
-      enabled = true;
-      maxretry = 5;
-      findtime = 600;
-      bantime = 600;
-      ignoreip = "${trustedNetworks.loopback} ${trustedNetworks.homeNetwork}";
-    };
-  };
+  # No fail2ban as per project requirements
 
   # Raspberry Pi specific hardening kernel parameters
   boot.kernelParams = [

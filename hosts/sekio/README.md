@@ -54,7 +54,7 @@ A custom U-Boot configuration ignores UART interrupts during boot, which prevent
 - PPS (Pulse Per Second) GPIO support for precise timing
 - GPSD daemon for GPS data collection and distribution
 - Chrony NTP server with GPS/PPS integration for stratum 1 time source
-- Security features including firewall and fail2ban
+- Security features including firewall
 - SD card optimizations to reduce wear and extend lifespan:
   - Logs kept in memory
   - ZRAM swap enabled
