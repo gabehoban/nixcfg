@@ -45,6 +45,16 @@
           { nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ]; }
         ] ++ commonModules;
       };
+      
+      # Casio configuration (aarch64-linux)
+      casio = inputs.nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        specialArgs = mkArgs "aarch64-linux";
+        modules = [
+          (configLib.relativeToRoot "hosts/casio")
+          { nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ]; }
+        ] ++ commonModules;
+      };
     };
   };
 }

@@ -1,6 +1,6 @@
-# images/sekio.nix
+# images/casio.nix
 #
-# SD card image for sekio NTP server
+# SD card image for casio NTP server
 {
   config,
   configLib,
@@ -16,6 +16,6 @@
   ];
 
   # Basic system settings
-  networking.hostName = "sekio";
-  sdImage.imageBaseName = "nixos-sd-image-sekio";
+  networking.hostName = "casio";
+  sdImage.imageBaseName = "nixos-sd-image-casio";
 }

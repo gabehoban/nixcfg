@@ -117,15 +117,6 @@ in
         "auto-allocate-uids" # Automatic UID allocation for builds
       ];
 
-      # Use sandbox for builds (may decrease performance but increases security)
-      sandbox = true;
-      sandbox-fallback = false; # Don't fall back to non-sandbox if sandbox fails
-      extra-sandbox-paths = [
-        # Additional paths to expose in the sandbox
-        "/etc/ssl/certs"
-        "/etc/ca-certificates"
-      ];
-
       # Keep build logs
       keep-build-log = true;
 
@@ -228,10 +219,6 @@ in
   # Assertions to check correct configuration
   assertions = [
     {
-      assertion = config.nix.settings.sandbox -> config.nix.settings.extra-sandbox-paths != [ ];
-      message = "Sandbox is enabled but no extra-sandbox-paths are configured.";
-    }
-    {
       assertion = config.nix.settings.trusted-substituters != [ ];
       message = "No trusted substituters configured, builds may be slow without binary caches.";
     }
@@ -240,8 +227,9 @@ in
       message = "No trusted public keys configured for binary cache verification.";
     }
     {
-      assertion = !(config.nix.settings ? auto-optimise-store) || 
-                  config.nix.settings.auto-optimise-store -> config.nix.optimise.automatic;
+      assertion =
+        !(config.nix.settings ? auto-optimise-store) || config.nix.settings.auto-optimise-store
+        -> config.nix.optimise.automatic;
       message = "auto-optimise-store is enabled but nix.optimise.automatic is not, which may cause inconsistencies.";
     }
   ];

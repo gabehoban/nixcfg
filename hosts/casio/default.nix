@@ -1,4 +1,4 @@
-# hosts/sekio/default.nix
+# hosts/casio/default.nix
 #
 # Stratum 1 NTP server using GPS for timing (Raspberry Pi 4)
 {
@@ -9,8 +9,8 @@
 }:
 {
   networking = {
-    hostName = "sekio";
-    hostId = "a7b92c14";
+    hostName = "casio";
+    hostId = "9e07b0bc";
   };
 
   # ───────────────────────────────────────────
@@ -32,5 +32,5 @@
   # Security Settings
   # ───────────────────────────────────────────
   # SSH host key for age encryption
-  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJco2ctNIBP1fph74SCE6LMv8oKF1PYjRupAmbC6pdd3";
+  age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXKcmTzg1RhXaO15q5bk4zoQR8B5i/XzQTkoJ/tX8Q9";
 }

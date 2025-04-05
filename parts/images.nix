@@ -17,21 +17,34 @@
         inherit (inputs) nixpkgs;
         inherit system;
       };
+      
+      # Common Raspberry Pi image configuration
+      rpiImageModules = [
+        "${inputs.nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+        {
+          nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ];
+          sdImage.firmwareSize = 128;
+          sdImage.expandOnBoot = true;
+          boot.loader.generic-extlinux-compatible.enable = true;
+        }
+      ];
     in {
       # Sekio SD card image
       sekio = inputs.nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = mkArgs "aarch64-linux";
         modules = [
-          "${inputs.nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
           (configLib.relativeToRoot "images/sekio.nix")
-          {
-            nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ];
-            sdImage.firmwareSize = 128;
-            sdImage.expandOnBoot = true;
-            boot.loader.generic-extlinux-compatible.enable = true;
-          }
-        ];
+        ] ++ rpiImageModules;
+      };
+      
+      # Casio SD card image
+      casio = inputs.nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        specialArgs = mkArgs "aarch64-linux";
+        modules = [
+          (configLib.relativeToRoot "images/casio.nix")
+        ] ++ rpiImageModules;
       };
       
       # Workstation ISO image
