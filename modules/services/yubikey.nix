@@ -17,6 +17,12 @@
   #
   # Hardware support
   #
+  programs.ssh.startAgent = false;
+  environment.shellInit = ''
+    export GPG_TTY="$(tty)"
+    gpg-connect-agent /bye
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+  '';
 
   # Enable GPG smartcard support for using YubiKey as a GPG key
   hardware.gpgSmartcards.enable = true;
@@ -88,6 +94,9 @@
     #
     services.gpg-agent = {
       enable = true;
+
+      enableSshSupport = true;
+      enableExtraSocket = true;
 
       # https://github.com/drduh/config/blob/master/gpg-agent.conf
       # Cache for 60 seconds

@@ -37,7 +37,7 @@
         openssh = {
           # Authorized keys for SSH access - ensure this key has sudo access for Colmena deployments
           authorizedKeys.keys = [
-            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIPH/GNUI0con3U+Jmh7tYAnvGTT9bSzkA5kUJAWy0UT8AAAABHNzaDo="
+            "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINo9hIkOg88mXm/w5UpM5M+hisd6rcNyq/A8Yhd9Bb2/AAAABHNzaDo="
           ];
         };
       };

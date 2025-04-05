@@ -1,7 +1,8 @@
 # modules/services/ssh.nix
 #
 # SSH server and client configuration with security hardening
-_: {
+{ pkgs, ... }:
+{
   #
   # OpenSSH server configuration
   #
@@ -15,7 +16,7 @@ _: {
       # Allow only key-based authentication
       PasswordAuthentication = false;
     };
-    
+
     # Allow root login from trusted subnet
     extraConfig = ''
       Match Address 10.32.0.0/16
@@ -37,7 +38,10 @@ _: {
   # SSH client configuration
   #
   programs.ssh = {
-    # Automatically start SSH agent for key management
-    startAgent = true;
+    startAgent = false;
+    agentPKCS11Whitelist = "${pkgs.opensc}/lib/opensc-pkcs11.so";
+    extraConfig = ''
+      PKCS11Provider "${pkgs.opensc}/lib/opensc-pkcs11.so"
+    '';
   };
 }
