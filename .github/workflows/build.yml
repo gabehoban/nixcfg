@@ -29,7 +29,13 @@ jobs:
           extra_nix_config: |-
             accept-flake-config = true
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            extra-platforms = aarch64-linux
           nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Setup QEMU for aarch64 emulation
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static binfmt-support
 
       - uses: cachix/cachix-action@v15
         with:
@@ -40,4 +46,4 @@ jobs:
       - name: "Build NixOS configs for: workstation and sekio"
         run: |-
           nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
-          nix build --print-build-logs '.#nixosConfigurations.sekio.config.system.build.toplevel'
+          nix build --print-build-logs --option extra-platforms aarch64-linux '.#nixosConfigurations.sekio.config.system.build.toplevel'
