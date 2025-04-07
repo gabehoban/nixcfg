@@ -3,47 +3,54 @@ on:
   - push
   - workflow_dispatch
 
-# Prevent concurrent builds of the same branch
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  build-configs:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      # Free additional disk space for build
-      - name: Free disk space
-        uses: thiagokokada/free-disk-space@main
-        with:
-          opt: true
-          tool-cache: true
-          usrlocal: true
-          usrmisc: true
+    strategy:
+      fail-fast: false
+      # Here we specify the matrix of our hosts and their target platform architectures
+      matrix:
+        machine:
+          - host: workstation
+            platform: x86-64-linux
+          # - host: nuc-luna
+          #   platform: x86-64-linux
+          # - host: nuc-titan
+          #   platform: x86-64-linux
+          # - host: nuc-juno
+          #   platform: x86-64-linux
+          # - host: rpi-casio
+          #   platform: aarch64-linux
+          # - host: rpi-sekio
+          #   platform: aarch64-linux
 
+    steps:
       - uses: actions/checkout@v4
 
-      - uses: cachix/install-nix-action@v30
+      - if: matrix.machine.platform == 'aarch64-linux'
+        uses: docker/setup-qemu-action@v3
+
+      - run: |
+          sudo mkdir -p /etc/nix
+          echo "machine cache.labrats.cc password ${{ secrets.ATTIC_TOKEN }}" | sudo tee /etc/nix/netrc > /dev/null
+          git config --global url."https://${{ secrets.GH_TOKEN }}@github.com".insteadOf https://github.com
+
+      - uses: DeterminateSystems/nix-installer-action@main
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |-
-            accept-flake-config = true
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN }}
+          extra-conf: |
+            fallback = true
+            http-connections = 128
+            max-substitution-jobs = 128
             extra-platforms = aarch64-linux
-          nix_path: nixpkgs=channel:nixos-unstable
+            substituters = https://cache.labrats.cc/system?priority=43 https://nix-community.cachix.org?priority=41 https://chaotic-nyx.cachix.org?priority=42 https://cache.nixos.org/
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= system:vj3cG8S9lVGRvvmIjOjTJPUZJMPBrJ1FO6M1K2bBbOY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8=
 
-      - name: Setup QEMU for aarch64 emulation
+      - name: Setup local cache action
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build and push system
         run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static binfmt-support
-
-      - uses: cachix/cachix-action@v15
-        with:
-          name: gabehoban
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          extraPullNames: nix-community, chaotic-nyx
-
-      - name: "Build NixOS configs for: workstation and sekio"
-        run: |-
-          nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
-          nix build --print-build-logs --option extra-platforms aarch64-linux '.#nixosConfigurations.sekio.config.system.build.toplevel'
+          nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
+          nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
+          nix run github:zhaofengli/attic#default push system result -j 2

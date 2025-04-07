@@ -1,7 +1,7 @@
 # profiles/server/gps-ntp.nix
 #
 # Common profile for Raspberry Pi GPS-based NTP servers
-# Extracts shared functionality between sekio and casio
+# Extracts shared functionality between rpi-sekio and rpi-casio
 {
   configLib,
   inputs,
@@ -37,6 +37,7 @@
     (configLib.moduleImport "services/chrony.nix")
     (configLib.moduleImport "services/gps-ntp-tools.nix")
     (configLib.moduleImport "services/gps-monitoring.nix")
+    (configLib.moduleImport "services/tailscale.nix")
 
     # User configuration
     (configLib.moduleImport "users/gabehoban.nix")

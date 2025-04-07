@@ -23,6 +23,9 @@
 
     # Network modules (flattened structure)
     (configLib.moduleImport "network/basic.nix")
+
+    # Service modules (flattened structure)
+    (configLib.moduleImport "services/tailscale.nix")
   ];
 
   # Enable non-free firmware

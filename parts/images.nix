@@ -29,21 +29,21 @@
         }
       ];
     in {
-      # Sekio SD card image
-      sekio = inputs.nixpkgs.lib.nixosSystem {
+      # rpi-sekio SD card image
+      rpi-sekio = inputs.nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = mkArgs "aarch64-linux";
         modules = [
-          (configLib.relativeToRoot "images/sekio.nix")
+          (configLib.relativeToRoot "images/rpi-sekio.nix")
         ] ++ rpiImageModules;
       };
       
-      # Casio SD card image
-      casio = inputs.nixpkgs.lib.nixosSystem {
+      # rpi-casio SD card image
+      rpi-casio = inputs.nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = mkArgs "aarch64-linux";
         modules = [
-          (configLib.relativeToRoot "images/casio.nix")
+          (configLib.relativeToRoot "images/rpi-casio.nix")
         ] ++ rpiImageModules;
       };
       

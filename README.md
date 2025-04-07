@@ -2,7 +2,6 @@
 
 [![ci-badge](https://img.shields.io/static/v1?label=Built%20with&message=nix&color=blue&style=flat&logo=nixos&link=https://nixos.org&labelColor=111212)](https://nixos.org)
 [![Build](https://github.com/gabehoban/nixcfg/actions/workflows/build.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/build.yml)
-[![Validate](https://github.com/gabehoban/nixcfg/actions/workflows/validate.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/validate.yml)
 [![Update](https://github.com/gabehoban/nixcfg/actions/workflows/update.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/update.yml)
 [![Dependencies](https://github.com/gabehoban/nixcfg/actions/workflows/dependencies.yml/badge.svg)](https://github.com/gabehoban/nixcfg/actions/workflows/dependencies.yml)
 

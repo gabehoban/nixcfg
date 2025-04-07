@@ -33,7 +33,6 @@ in
 
     # System-level directories
     directories = mkOption {
-      type = types.listOf types.str;
       default = [ ];
       description = "List of system directories to make persistent";
     };

@@ -11,17 +11,11 @@
 
     # Security settings
     settings = {
-      # Prevent direct root login for security except on local subnet
+      # Completely disable direct root login for security
       PermitRootLogin = "no";
       # Allow only key-based authentication
       PasswordAuthentication = false;
     };
-
-    # Allow root login from trusted subnet
-    extraConfig = ''
-      Match Address 10.32.0.0/16
-        PermitRootLogin yes
-    '';
 
     # Additional security settings to consider:
     # # Disable X11 forwarding if not needed
@@ -39,9 +33,5 @@
   #
   programs.ssh = {
     startAgent = false;
-    agentPKCS11Whitelist = "${pkgs.opensc}/lib/opensc-pkcs11.so";
-    extraConfig = ''
-      PKCS11Provider "${pkgs.opensc}/lib/opensc-pkcs11.so"
-    '';
   };
 }

@@ -76,5 +76,6 @@
   # Security configuration
   #
   # Allow sudo without password for wheel group members
+  # This is required for deploy-rs to work with gabehoban user instead of root
   security.sudo.wheelNeedsPassword = false;
 }

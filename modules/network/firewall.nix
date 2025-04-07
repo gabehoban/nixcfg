@@ -206,7 +206,6 @@ in
     # Ensure nftables modules are loaded early
     boot.kernelModules = [
       "nf_tables"
-      "nft_counter"
       "nft_log"
       "nft_limit"
       "nft_nat"

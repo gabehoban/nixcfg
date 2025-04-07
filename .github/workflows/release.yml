@@ -58,35 +58,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      # Free disk space
-      - name: Free disk space
-        uses: thiagokokada/free-disk-space@main
-        with:
-          opt: true
-          tool-cache: true
-          usrlocal: true
-          usrmisc: true
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |
-            accept-flake-config = true
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Set up Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: gabehoban
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          extraPullNames: nix-community, chaotic-nyx
 
       - name: Get version from tag or input
         id: get_version
@@ -98,11 +73,6 @@ jobs:
           fi
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Using version: ${VERSION}"
-
-      - name: Build workstation and sekio configs
-        run: |
-          nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
-          nix build --print-build-logs '.#nixosConfigurations.sekio.config.system.build.toplevel'
 
       - name: Generate CHANGELOG
         id: changelog
