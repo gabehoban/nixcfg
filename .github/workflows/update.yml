@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  update-flakes:
+  lockfile:
     runs-on: ubuntu-latest
     steps:
       - name: Generate Token
@@ -19,46 +19,29 @@ jobs:
         with:
           app-id: "${{ secrets.BOT_APP_ID }}"
           private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
-      - uses: thiagokokada/free-disk-space@main
-        with:
-          opt: true
-          tool-cache: true
-          usrlocal: true
-          usrmisc: true
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v30
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |-
-            accept-flake-config = true
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-          nix_path: nixpkgs=channel:nixos-unstable
-      - uses: cachix/cachix-action@v15
-        with:
-          name: gabehoban
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          extraPullNames: nix-community, chaotic-nyx
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
       - name: Update flake.lock
-        run: |
-          git config user.name "dev-baymax[bot]"
-          git config user.email "dev-baymax[bot]@users.noreply.github.com"
-          nix flake update --commit-lock-file
-      - name: "Build NixOS configs for: workstation"
-        run: |-
-          nix build --print-build-logs '.#nixosConfigurations.workstation.config.system.build.toplevel'
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        id: create_pr
+        uses: DeterminateSystems/update-flake-lock@main
+        id: update
         with:
-          token: "${{ steps.app-token.outputs.token }}"
-          body: |
-            ## Run report
+          commit-msg: "chore: update flake.lock file"
+          pr-title: "chore: update flake.lock file"
+          pr-body: |
+            Automated changes by the [update-flake-lock](https://github.com/DeterminateSystems/update-flake-lock) GitHub Action.
 
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          branch: flake-updates
-          delete-branch: true
-          title: "chore: update flake.lock file"
-      - name: Merge Pull Request
-        run: gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --auto --squash --delete-branch
+            ```
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```
+
+          git-author-name: "dev-baymax[bot]"
+          git-author-email: "dev-baymax[bot]@users.noreply.github.com"
+          git-committer-name: "dev-baymax[bot]"
+          git-committer-email: "dev-baymax[bot]@users.noreply.github.com"
+          token: "${{ steps.app-token.outputs.token }}"
+      - name: Merge pull request
+        run: gh pr merge ${{ steps.update.outputs.pull-request-number }} --auto --squash --delete-branch
         env:
           GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
