@@ -46,11 +46,8 @@ jobs:
             substituters = https://cache.labrats.cc/system?priority=43 https://nix-community.cachix.org?priority=41 https://chaotic-nyx.cachix.org?priority=42 https://cache.nixos.org/
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= system:vj3cG8S9lVGRvvmIjOjTJPUZJMPBrJ1FO6M1K2bBbOY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8=
 
-      - name: Setup local cache action
-        uses: DeterminateSystems/magic-nix-cache-action@main
-
       - name: Build and push system
         run: |
-          nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
+          nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
           nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
           nix run github:zhaofengli/attic#default push system result -j 2
