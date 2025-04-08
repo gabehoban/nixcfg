@@ -15,14 +15,14 @@ jobs:
             platform: x86-64-linux
           - host: nuc-luna
             platform: x86-64-linux
-          # - host: nuc-titan
-          #   platform: x86-64-linux
-          # - host: nuc-juno
-          #   platform: x86-64-linux
-          # - host: rpi-casio
-          #   platform: aarch64-linux
-          # - host: rpi-sekio
-          #   platform: aarch64-linux
+          - host: nuc-titan
+            platform: x86-64-linux
+          - host: nuc-juno
+            platform: x86-64-linux
+          - host: rpi-casio
+            platform: aarch64-linux
+          - host: rpi-sekio
+            platform: aarch64-linux
 
     steps:
       - uses: actions/checkout@v4
