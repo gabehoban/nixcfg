@@ -13,8 +13,8 @@ jobs:
         machine:
           - host: workstation
             platform: x86-64-linux
-          # - host: nuc-luna
-          #   platform: x86-64-linux
+          - host: nuc-luna
+            platform: x86-64-linux
           # - host: nuc-titan
           #   platform: x86-64-linux
           # - host: nuc-juno
@@ -30,25 +30,8 @@ jobs:
       - if: matrix.machine.platform == 'aarch64-linux'
         uses: docker/setup-qemu-action@v3
 
-      # - run: |
-      #     sudo mkdir -p /etc/nix
-      #     echo "machine cache.labrats.cc password ${{ secrets.ATTIC_TOKEN }}" | sudo tee /etc/nix/netrc > /dev/null
-      #     git config --global url."https://${{ secrets.GH_TOKEN }}@github.com".insteadOf https://github.com
-
-      # - uses: DeterminateSystems/nix-installer-action@main
-      #   with:
-      #     github-token: ${{ secrets.GH_TOKEN }}
-      #     extra-conf: |
-      #       fallback = true
-      #       http-connections = 128
-      #       max-substitution-jobs = 128
-      #       extra-platforms = aarch64-linux
-      #       substituters = https://cache.labrats.cc/system?priority=43 https://nix-community.cachix.org?priority=41 https://chaotic-nyx.cachix.org?priority=42 https://cache.nixos.org/
-      #       trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= system:vj3cG8S9lVGRvvmIjOjTJPUZJMPBrJ1FO6M1K2bBbOY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8=
-
       - name: Build and push system
         run: |
-          nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
-          nix run github:zhaofengli/attic#default watch-store system &
           nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
+          nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
           nix run github:zhaofengli/attic#default push system result -j 2

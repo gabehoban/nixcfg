@@ -2,7 +2,6 @@
 #
 # Profile for dedicated Nix build hosts
 {
-  configLib,
   pkgs,
   ...
 }:
@@ -13,9 +12,6 @@
   imports = [
     # Base homelab profile
     ./homelab.nix
-
-    # Core build modules
-    (configLib.moduleImport "core/nix-remote-builds.nix")
   ];
 
   # ───────────────────────────────────────────
@@ -31,7 +27,7 @@
       trusted-users = [
         "root"
         "gabehoban"
-        "nix-builder"
+        "github-runner"
       ];
     };
 
