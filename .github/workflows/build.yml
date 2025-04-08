@@ -27,9 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - if: matrix.machine.platform == 'aarch64-linux'
-        uses: docker/setup-qemu-action@v3
-
       - name: Build and push system
         run: |
           nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel

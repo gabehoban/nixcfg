@@ -29,6 +29,7 @@
         "gabehoban"
         "github-runner"
       ];
+      extra-platforms = [ "aarch64-linux" ];
     };
 
     # Enable flakes
@@ -43,6 +44,8 @@
   # ───────────────────────────────────────────
   # System Configuration
   # ───────────────────────────────────────────
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   # Optimize system for builds
   boot.kernel.sysctl = {
