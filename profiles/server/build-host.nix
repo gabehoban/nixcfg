@@ -47,51 +47,6 @@
   # ───────────────────────────────────────────
   # System Configuration
   # ───────────────────────────────────────────
-  # Create build user
-  users.users.nix-builder = {
-    isNormalUser = true;
-    home = "/home/nix-builder";
-    description = "Nix remote builder user";
-    group = "users";
-    uid = 1001;
-    extraGroups = [
-      "wheel"
-      "systemd-journal"
-    ];
-    openssh.authorizedKeys.keyFiles = [
-      # Add build keys here
-    ];
-  };
-
-  # Ensure proper persistence for build operations
-  # Note: /nix and /var/log are already handled by dedicated ZFS datasets
-  # No additional system directories needed for impermanence
-
-  # Ensure nix-builder's SSH directory is persistent
-  impermanence.users = {
-    "nix-builder" = {
-      directories = [ ".ssh" ];
-    };
-  };
-
-  # ───────────────────────────────────────────
-  # Build optimization
-  # ───────────────────────────────────────────
-  # Configure higher limits for builders
-  security.pam.loginLimits = [
-    {
-      domain = "nix-builder";
-      type = "soft";
-      item = "nofile";
-      value = "65536";
-    }
-    {
-      domain = "nix-builder";
-      type = "hard";
-      item = "nofile";
-      value = "65536";
-    }
-  ];
 
   # Optimize system for builds
   boot.kernel.sysctl = {

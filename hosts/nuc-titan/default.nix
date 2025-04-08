@@ -19,6 +19,7 @@
     (configLib.moduleImport "services/bind.nix")
     (configLib.moduleImport "services/attic.nix")
     (configLib.moduleImport "services/cloudflared.nix")
+    (configLib.moduleImport "services/github-runner.nix")
   ];
 
   # Allow the cloudflared package which is currently marked as broken

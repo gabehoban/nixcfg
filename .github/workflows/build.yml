@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: nixos-runner
     strategy:
       fail-fast: false
       # Here we specify the matrix of our hosts and their target platform architectures
@@ -48,6 +48,7 @@ jobs:
 
       - name: Build and push system
         run: |
-          nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
           nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
+          nix run github:zhaofengli/attic#default watch-store system &
+          nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
           nix run github:zhaofengli/attic#default push system result -j 2
