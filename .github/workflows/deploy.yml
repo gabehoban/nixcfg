@@ -1,4 +1,4 @@
-name: Build
+name: Deploy
 on:
   push:
     branches:
@@ -21,10 +21,10 @@ jobs:
             platform: x86-64-linux
           - host: nuc-juno
             platform: x86-64-linux
-          - host: rpi-casio
-            platform: aarch64-linux
-          - host: rpi-sekio
-            platform: aarch64-linux
+          # - host: rpi-casio
+          #   platform: aarch64-linux
+          # - host: rpi-sekio
+          #   platform: aarch64-linux
     steps:
       - uses: actions/checkout@v4
       - name: Build and push system
@@ -32,3 +32,6 @@ jobs:
           nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
           nix run github:zhaofengli/attic#default login labrats https://cache.labrats.cc ${{ secrets.ATTIC_TOKEN }}
           nix run github:zhaofengli/attic#default push system result -j 2
+      - name: Deploy system configurations
+        run: |
+          nix run github:serokell/deploy-rs -- --skip-checks --checksigs .#${{ matrix.machine.host }}

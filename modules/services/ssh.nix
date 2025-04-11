@@ -1,8 +1,7 @@
 # modules/services/ssh.nix
 #
 # SSH server and client configuration with security hardening
-{ pkgs, ... }:
-{
+_: {
   #
   # OpenSSH server configuration
   #

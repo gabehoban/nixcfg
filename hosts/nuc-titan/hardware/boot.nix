@@ -1,8 +1,7 @@
 # hosts/nuc-titan/hardware/boot.nix
 #
 # Boot configuration for nuc-titan
-{ pkgs, ... }:
-{
+_: {
   # Use systemd-boot for UEFI systems
   boot = {
     loader = {

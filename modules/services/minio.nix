@@ -93,8 +93,11 @@
 
   # Allow required ports for MinIO and VRRP protocol
   networking.firewall = {
-    allowedTCPPorts = [ 9000 9001 ];
-    
+    allowedTCPPorts = [
+      9000
+      9001
+    ];
+
     # Allow VRRP protocol for keepalived
     extraCommands = ''
       # Allow VRRP protocol (necessary for keepalived)

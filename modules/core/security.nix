@@ -164,26 +164,6 @@ let
   ];
 
   # Firewall anti-scan rules
-  firewallAntiScanRules = {
-    # Basic anti-scan measures
-    rate-limit-ssh = {
-      from = "all";
-      to = [ "fw" ];
-      extraLines = [
-        # Limit new SSH connections to 3 per minute from the same source
-        "tcp dport 22 ct state new limit rate 3/minute counter accept"
-      ];
-    };
-
-    # Drop invalid packets
-    drop-invalid = {
-      from = "all";
-      to = "all";
-      extraLines = [
-        "ct state invalid counter drop"
-      ];
-    };
-  };
 
 in
 {
@@ -208,7 +188,7 @@ in
   networking.firewall = {
     enable = true;
     allowPing = true;
-    
+
     # Rate limit SSH connections
     extraCommands = ''
       # Limit new SSH connections to 3 per minute from the same source

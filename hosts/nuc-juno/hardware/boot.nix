@@ -1,8 +1,7 @@
 # hosts/nuc-juno/hardware/boot.nix
 #
 # Boot configuration for nuc-juno
-{ pkgs, ... }:
-{
+_: {
   # Use systemd-boot for UEFI systems
   boot = {
     loader = {

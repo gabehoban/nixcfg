@@ -1,8 +1,7 @@
 # hosts/nuc-luna/hardware/boot.nix
 #
 # Boot configuration for nuc-luna
-{ pkgs, ... }:
-{
+_: {
   # Use systemd-boot for UEFI systems
   boot = {
     loader = {
