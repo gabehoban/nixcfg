@@ -56,6 +56,17 @@
   # ───────────────────────────────────────────
   # System Configuration
   # ───────────────────────────────────────────
+
+  boot.kernelParams = [
+    "lockdown=none"
+    "init_on_alloc=1" # Initialize heap memory allocations
+    "init_on_free=1" # Initialize freed heap memory
+    "page_alloc.shuffle=1" # Randomize page allocator freelists
+    "pti=on" # Page Table Isolation (Meltdown mitigation)
+    "randomize_kstack_offset=on" # Strengthen kernel stack ASLR
+    "vsyscall=none" # Disable vsyscall table (legacy feature)
+  ];
+
   # Enable impermanence for homelab servers
   impermanence.enable = true;
 

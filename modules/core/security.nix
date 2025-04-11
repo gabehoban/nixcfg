@@ -10,17 +10,6 @@
 with lib;
 
 let
-  # Default secure kernel parameters for all systems
-  commonKernelParams = [
-    "lockdown=none"
-    "init_on_alloc=1" # Initialize heap memory allocations
-    "init_on_free=1" # Initialize freed heap memory
-    "page_alloc.shuffle=1" # Randomize page allocator freelists
-    "pti=on" # Page Table Isolation (Meltdown mitigation)
-    "randomize_kstack_offset=on" # Strengthen kernel stack ASLR
-    "vsyscall=none" # Disable vsyscall table (legacy feature)
-  ];
-
   # Common sysctl hardening parameters
   commonSysctlParams = {
     # Restrict access to kernel logs
@@ -162,14 +151,8 @@ let
       bits = 4096;
     }
   ];
-
-  # Firewall anti-scan rules
-
 in
 {
-  # Apply kernel hardening parameters
-  boot.kernelParams = commonKernelParams;
-
   # Apply sysctl hardening
   boot.kernel.sysctl = commonSysctlParams;
 
