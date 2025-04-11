@@ -48,8 +48,8 @@ let
     "net.ipv4.icmp_echo_ignore_broadcasts" = 1;
     "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
 
-    # Restrict unprivileged user namespaces
-    "kernel.unprivileged_userns_clone" = 0;
+    # Don't unprivileged user namespaces - breaks plex
+    "kernel.unprivileged_userns_clone" = 1;
   };
 
   # Default login limits to prevent resource exhaustion attacks
