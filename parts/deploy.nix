@@ -16,7 +16,7 @@
     nodes = {
       # Raspberry Pi NTP servers (aarch64-linux)
       rpi-sekio = {
-        hostname = "sekio.local";
+        hostname = "rpi-sekio.local";
         sshUser = "gabehoban";
         profiles = {
           system = {
