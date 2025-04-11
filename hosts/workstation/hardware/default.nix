@@ -51,6 +51,7 @@
     # ZFS support for the root filesystem
     supportedFilesystems = [ "zfs" ];
     # Prompt for encryption passphrase during boot
+    zfs.package = pkgs.zfs_cachyos;
     zfs.requestEncryptionCredentials = true;
 
     # Implement filesystem immutability via ZFS rollback on every boot

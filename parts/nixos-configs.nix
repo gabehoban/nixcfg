@@ -23,9 +23,7 @@
         };
 
         # Common modules for all systems
-        commonModules = [
-          inputs.nixos-nftables-firewall.nixosModules.default
-        ];
+        commonModules = [ ];
       in
       {
         # Workstation configuration (x86_64-linux)

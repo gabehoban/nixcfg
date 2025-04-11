@@ -18,16 +18,8 @@
     inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
 
-    # Core system modules
-    (configLib.moduleImport "network/default.nix")
-    (configLib.moduleImport "core/git.nix")
-    (configLib.moduleImport "core/locale.nix")
-    (configLib.moduleImport "core/nix.nix")
-    (configLib.moduleImport "core/impermanence.nix")
-    (configLib.moduleImport "core/packages.nix")
-    (configLib.moduleImport "core/secrets.nix")
-    (configLib.moduleImport "core/starship.nix")
-    (configLib.moduleImport "core/zsh.nix")
+    # Import the minimal core profile
+    (configLib.profileImport "core/minimal.nix")
 
     # Services
     (configLib.moduleImport "services/ssh.nix")
@@ -59,7 +51,7 @@
   # ───────────────────────────────────────────
   # Network and Security Configuration
   # ───────────────────────────────────────────
-  modules.network.firewall.enable = true;
+  networking.firewall.enable = true;
 
   # ───────────────────────────────────────────
   # System Configuration

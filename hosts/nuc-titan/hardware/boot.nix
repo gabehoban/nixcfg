@@ -10,12 +10,10 @@
         enable = true;
         consoleMode = "auto";
         editor = false;
+        configurationLimit = 3;
       };
       efi.canTouchEfiVariables = true;
     };
-
-    # Use CachyOS optimized kernel
-    kernelPackages = pkgs.linuxPackages_cachyos;
 
     # Optimization for AMD Ryzen 9 6900HX
     kernelParams = [

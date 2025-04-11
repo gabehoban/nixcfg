@@ -9,6 +9,7 @@
   imports = [
     # Import the minimal core profile
     (configLib.profileImport "core/minimal.nix")
+    (configLib.moduleImport "hardware/hw-secureboot.nix")
 
     # Desktop environment
     (configLib.moduleImport "desktop/desktop-gnome.nix")

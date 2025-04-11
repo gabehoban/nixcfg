@@ -22,7 +22,6 @@
     ./hardware
 
     # Host-specific configurations
-    ./security.nix
     ./optimization.nix
   ];
 

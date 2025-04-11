@@ -91,21 +91,17 @@
     };
   };
 
-  # Allow VRRP protocol through NFT-based firewall using the module's rule system
-  modules.network.firewall.rules = lib.mkIf (config.modules.network.firewall.enable or false) {
-    vrrp-protocol = {
-      from = "all";
-      to = [ "fw" ];
-      extraLines = [
-        "ip protocol vrrp accept comment \"Allow VRRP for keepalived\""
-        "ip6 nexthdr vrrp accept comment \"Allow VRRP for keepalived IPv6\""
-      ];
-    };
+  # Allow required ports for MinIO and VRRP protocol
+  networking.firewall = {
+    allowedTCPPorts = [ 9000 9001 ];
+    
+    # Allow VRRP protocol for keepalived
+    extraCommands = ''
+      # Allow VRRP protocol (necessary for keepalived)
+      iptables -A INPUT -p vrrp -j ACCEPT
+      ip6tables -A INPUT -p vrrp -j ACCEPT
+    '';
   };
-  networking.firewall.allowedTCPPorts = [
-    9000
-    9001
-  ];
 
   # Ensure proper service ordering
   systemd.services.minio.after = [ "keepalived.service" ];

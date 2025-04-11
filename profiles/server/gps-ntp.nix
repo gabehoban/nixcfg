@@ -70,7 +70,7 @@
   # ───────────────────────────────────────────
   # Network and Security Configuration
   # ───────────────────────────────────────────
-  modules.network.firewall.enable = true;
+  networking.firewall.enable = true;
 
   # ───────────────────────────────────────────
   # System Configuration

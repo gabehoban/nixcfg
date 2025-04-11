@@ -10,12 +10,10 @@
         enable = true;
         consoleMode = "auto";
         editor = false;
+        configurationLimit = 3;
       };
       efi.canTouchEfiVariables = true;
     };
-
-    # Use CachyOS optimized kernel
-    kernelPackages = pkgs.linuxPackages_cachyos;
 
     # Silent boot for server hardware
     kernelParams = [

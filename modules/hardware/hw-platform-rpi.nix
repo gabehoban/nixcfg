@@ -70,13 +70,11 @@ _:
   '';
 
   # Security: Firewall
-  modules.network.firewall = {
-    enable = true; # Use new NFT-based firewall
-    # SSH is enabled by default, no need to specify port 22
-    # Allow ping
+  networking.firewall = {
+    enable = true;
     allowPing = true;
     # Log all denied packets
-    logRefusedConnections = true;
+    logReversePathDrops = true;
   };
 
   # Security: SSH hardening

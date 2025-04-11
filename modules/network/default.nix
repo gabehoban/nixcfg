@@ -13,7 +13,7 @@
   imports = [
     # Basic networking configuration
     ./basic.nix
-    # NFT-based firewall
+    # Standard NixOS firewall
     ./firewall.nix
   ];
 

@@ -62,9 +62,9 @@
   };
 
   # Configure firewall to allow DNS traffic
-  modules.network.firewall = lib.mkIf (config.modules.network.firewall.enable or false) {
-    openTcpPorts = [ 53 ];
-    openUdpPorts = [ 53 ];
+  networking.firewall = {
+    allowedTCPPorts = [ 53 ];
+    allowedUDPPorts = [ 53 ];
   };
 
   # Add DNS utilities

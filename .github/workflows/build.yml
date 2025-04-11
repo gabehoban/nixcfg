@@ -1,7 +1,9 @@
 name: Build
 on:
-  - push
-  - workflow_dispatch
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,10 +25,8 @@ jobs:
             platform: aarch64-linux
           - host: rpi-sekio
             platform: aarch64-linux
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Build and push system
         run: |
           nix build --accept-flake-config .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel

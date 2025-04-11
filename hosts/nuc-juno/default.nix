@@ -8,10 +8,7 @@
     # Hardware configuration
     ./hardware
 
-    # Security settings
-    ./security.nix
-
-    # Base server profile
+    # Base server profile with integrated security
     (configLib.profileImport "server/homelab.nix")
 
     # Host-specific service imports

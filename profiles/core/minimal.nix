@@ -10,19 +10,19 @@
   imports = [
     # Core system modules
     (configLib.moduleImport "core/boot.nix")
+    (configLib.moduleImport "core/direnv.nix")
     (configLib.moduleImport "core/git.nix")
-    # Impermanence is now opt-in via impermanence.enable = true
     (configLib.moduleImport "core/impermanence.nix")
     (configLib.moduleImport "core/locale.nix")
     (configLib.moduleImport "core/nix.nix")
     (configLib.moduleImport "core/packages.nix")
     (configLib.moduleImport "core/secrets.nix")
+    (configLib.moduleImport "core/security.nix")
     (configLib.moduleImport "core/starship.nix")
     (configLib.moduleImport "core/zsh.nix")
-    (configLib.moduleImport "core/direnv.nix")
 
     # Network modules (flattened structure)
-    (configLib.moduleImport "network/basic.nix")
+    (configLib.moduleImport "network/default.nix")
 
     # Service modules (flattened structure)
     (configLib.moduleImport "services/tailscale.nix")

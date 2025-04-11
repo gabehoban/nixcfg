@@ -127,26 +127,8 @@ in
       chrony
     ];
 
-    # Configure firewall to allow NTP traffic if the NFT-based firewall is enabled
-    modules.network.firewall.rules = lib.mkIf (config.modules.network.firewall.enable or false) {
-      ntp = {
-        from = map (net: "ntp-${net}") allowedNetworks;
-        to = [ "fw" ];
-        allowedUDPPorts = [ 123 ]; # NTP uses UDP port 123
-      };
-    };
-
-    # Define NTP zones for each allowed network
-    modules.network.firewall.zones = lib.mkIf (config.modules.network.firewall.enable or false) (
-      lib.listToAttrs (
-        map (net: {
-          name = "ntp-${net}";
-          value = {
-            ipv4Addresses = [ net ];
-          };
-        }) allowedNetworks
-      )
-    );
+    # Configure firewall to allow NTP traffic
+    networking.firewall.allowedUDPPorts = [ 123 ]; # NTP uses UDP port 123
 
     # Configure persistence for chrony data
     impermanence.directories = lib.mkIf (config.impermanence.enable or false) [

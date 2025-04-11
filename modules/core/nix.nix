@@ -57,6 +57,13 @@ let
   ];
 in
 {
+  system.autoUpgrade = {
+    enable = true;
+    dates = "06:00";
+    flake = "github:gabehoban/nixcfg";
+    allowReboot = true;
+  };
+
   #
   # Nix-ld configuration for running unpackaged binaries
   #
@@ -193,7 +200,7 @@ in
       # Allow proprietary packages
       allowUnfree = true;
       # Allow packages marked as broken
-      allowBroken = false; # Changed to false for stability
+      allowBroken = true;
       # Enable all available hardware support
       enableAllTerminfo = true;
       # Allow system-specific optimizations

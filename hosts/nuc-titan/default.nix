@@ -8,9 +8,6 @@
     # Hardware configuration
     ./hardware
 
-    # Security settings
-    ./security.nix
-
     # Base profiles
     (configLib.profileImport "server/homelab.nix")
     (configLib.profileImport "server/build-host.nix")

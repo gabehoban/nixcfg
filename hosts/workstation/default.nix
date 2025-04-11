@@ -50,10 +50,8 @@
   # ───────────────────────────────────────────
   # Network and Security Configuration
   # ───────────────────────────────────────────
-  # Enable the NFT-based firewall with default settings
-  modules.network.firewall = {
-    enable = true;
-  };
+  # Enable the standard NixOS firewall
+  networking.firewall.enable = true;
 
   # ───────────────────────────────────────────
   # Home-manager configuration

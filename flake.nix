@@ -22,10 +22,6 @@
     # Framework & functionality modules
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     impermanence.url = "github:nix-community/impermanence";
-    nixos-nftables-firewall = {
-      url = "github:thelegy/nixos-nftables-firewall";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # Extended modules (with nixpkgs follows)
     agenix = {

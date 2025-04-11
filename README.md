@@ -38,23 +38,26 @@ nixcfg/
 # Switch to workstation configuration
 nixos-rebuild switch --flake .#workstation
 
-# Deploy to sekio using deploy-rs
-deploy -s .#sekio
+# Deploy to sekio using colmena
+colmena apply --on rpi-sekio
 ```
 
 ### Remote Deployment
 
-This repository uses [deploy-rs](https://github.com/serokell/deploy-rs) for remote deployment of the Raspberry Pi configuration, which builds the system on the more powerful workstation and deploys to the Pi.
+This repository uses [Colmena](https://github.com/zhaofengli/colmena) for remote deployment, which builds the system on the more powerful workstation and deploys to the target machines.
 
 ```bash
 # Build and deploy sekio configuration
-deploy -s .#sekio
+colmena apply --on rpi-sekio
 
-# Check for configuration issues without deploying
-deploy check
+# Apply to all nodes
+colmena apply
 
-# See what would change without deploying
-deploy -s .#sekio --dry-run
+# Build without deploying
+colmena build
+
+# Deploy to specific nodes
+colmena apply --on nuc-juno nuc-luna
 ```
 
 ### Customizing for Your Machine
@@ -63,7 +66,7 @@ deploy -s .#sekio --dry-run
 2. Set up hardware configs in `hosts/your-machine/hardware/`
 3. Create a `default.nix` that imports the modules and profiles you need
 4. Add your machine to `flake.nix` under `nixosConfigurations`
-5. Optionally add your machine to the deploy-rs configuration in parts/deploy.nix
+5. Optionally add your machine to the Colmena configuration in parts/colmena.nix
 
 ## 🧰 Working with Modules
 
