@@ -10,97 +10,6 @@
 with lib;
 
 let
-  # Common sysctl hardening parameters
-  commonSysctlParams = {
-    # Restrict access to kernel logs
-    "kernel.dmesg_restrict" = 1;
-
-    # Restrict SysRq keys
-    "kernel.sysrq" = 0;
-
-    # Restrict user space access to kernel memory
-    "vm.mmap_min_addr" = 65536;
-
-    # Randomize address space layout
-    "kernel.randomize_va_space" = 2;
-
-    # Restrict core dumps
-    "fs.suid_dumpable" = 0;
-    "kernel.core_pattern" = "|/bin/false";
-
-    # Network security
-    "net.ipv4.conf.all.accept_redirects" = 0;
-    "net.ipv4.conf.default.accept_redirects" = 0;
-    "net.ipv4.conf.all.secure_redirects" = 0;
-    "net.ipv4.conf.default.secure_redirects" = 0;
-    "net.ipv6.conf.all.accept_redirects" = 0;
-    "net.ipv6.conf.default.accept_redirects" = 0;
-    "net.ipv4.conf.all.send_redirects" = 0;
-    "net.ipv4.conf.default.send_redirects" = 0;
-    "net.ipv4.conf.all.accept_source_route" = 0;
-    "net.ipv4.conf.default.accept_source_route" = 0;
-    "net.ipv6.conf.all.accept_source_route" = 0;
-    "net.ipv6.conf.default.accept_source_route" = 0;
-    "net.ipv4.conf.all.log_martians" = 1;
-    "net.ipv4.conf.default.log_martians" = 1;
-    "net.ipv4.tcp_syncookies" = 1;
-    "net.ipv4.tcp_rfc1337" = 1;
-    "net.ipv4.icmp_echo_ignore_broadcasts" = 1;
-    "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
-
-    # Don't unprivileged user namespaces - breaks plex
-    "kernel.unprivileged_userns_clone" = 1;
-  };
-
-  # Default login limits to prevent resource exhaustion attacks
-  defaultLoginLimits = [
-    # Default limits for all users
-    {
-      domain = "*";
-      item = "nproc";
-      type = "soft";
-      value = "1024";
-    }
-    {
-      domain = "*";
-      item = "nproc";
-      type = "hard";
-      value = "2048";
-    }
-    {
-      domain = "*";
-      item = "nofile";
-      type = "soft";
-      value = "1024";
-    }
-    {
-      domain = "*";
-      item = "nofile";
-      type = "hard";
-      value = "4096";
-    }
-    {
-      domain = "*";
-      item = "core";
-      type = "soft";
-      value = "0";
-    } # Disable core dumps
-
-    # More permissive limits for system services
-    {
-      domain = "root";
-      item = "nproc";
-      type = "soft";
-      value = "unlimited";
-    }
-    {
-      domain = "root";
-      item = "nofile";
-      type = "soft";
-      value = "65536";
-    }
-  ];
-
   # SSH hardening common settings
   sshSettings = {
     # Basic settings
@@ -153,12 +62,6 @@ let
   ];
 in
 {
-  # Apply sysctl hardening
-  boot.kernel.sysctl = commonSysctlParams;
-
-  # Resource limits hardening
-  security.pam.loginLimits = defaultLoginLimits;
-
   # SSH hardening settings
   services.openssh = {
     settings = sshSettings;
@@ -171,12 +74,5 @@ in
   networking.firewall = {
     enable = true;
     allowPing = true;
-
-    # Rate limit SSH connections
-    extraCommands = ''
-      # Limit new SSH connections to 3 per minute from the same source
-      iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
-      iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
-    '';
   };
 }

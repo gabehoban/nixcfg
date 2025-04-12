@@ -85,6 +85,8 @@
   # Additional GNOME packages and extensions
   #
   environment.systemPackages = with pkgs; [
+    mpv
+
     # GNOME tools
     gnome-tweaks # System settings and tweaks
     adwaita-icon-theme # Default GNOME icon theme

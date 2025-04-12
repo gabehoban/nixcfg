@@ -43,7 +43,7 @@
             type master;
             file "${pkgs.writeText "${domain}.zone" ''
               $TTL    604800
-              @       IN      SOA     ns.${domain}. admin.labrats.cc. (2024040603 3600 1800 604800 86400)
+              @       IN      SOA     ns.${domain}. admin.labrats.cc. (2024040605 3600 1800 604800 86400)
               @       IN      NS      ns.${domain}.
               ns      IN      A       10.32.40.42
               plex    IN      A       10.32.40.41

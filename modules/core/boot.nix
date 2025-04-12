@@ -35,13 +35,6 @@
 
   # Process scheduling services
   services = {
-    # SCX scheduler for improved responsiveness
-    scx = {
-      enable = true;
-      scheduler = "scx_bpfland";
-      package = pkgs.scx.full;
-    };
-
     # Ananicy for prioritizing processes
     ananicy = {
       enable = true;

@@ -25,6 +25,7 @@
     (configLib.moduleImport "applications/app-discord.nix")
     (configLib.moduleImport "applications/app-firefox.nix")
     (configLib.moduleImport "applications/app-gaming.nix")
+    (configLib.moduleImport "applications/app-remmina.nix")
     (configLib.moduleImport "applications/app-zed.nix")
   ];
 }
