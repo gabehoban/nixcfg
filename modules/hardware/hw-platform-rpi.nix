@@ -1,7 +1,10 @@
 # modules/hardware/hw-platform-rpi.nix
 #
 # General optimizations for Raspberry Pi devices to improve reliability and performance
-# This is a flattened module that applies all optimizations directly when imported
+#
+# Comprehensive set of optimizations for Raspberry Pi including SD card write
+# reduction, RAM-based temporary storage, power management, ZRAM swap,
+# and security hardening. Automatically applied when imported.
 _:
 
 # Fully flattened direct configuration with all optimizations enabled by default

@@ -1,6 +1,10 @@
 # modules/core/boot.nix
 #
 # Boot and kernel configuration module
+#
+# Configures the boot loader, kernel parameters, and process scheduling
+# optimizations using the CachyOS kernel and ananicy-cpp for process
+# prioritization.
 {
   pkgs,
   ...

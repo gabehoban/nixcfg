@@ -1,6 +1,10 @@
 # modules/applications/app-firefox.nix
 #
 # Firefox browser configuration with privacy-focused settings
+#
+# Configures Firefox with privacy-enhancing settings, forced extensions,
+# and organizational policies that disable telemetry and unwanted features.
+# Includes hardware acceleration settings and persistence configuration.
 _: {
   programs.firefox = {
     enable = true;
