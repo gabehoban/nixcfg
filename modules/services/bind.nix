@@ -42,18 +42,20 @@
           zone "${domain}" {
             type master;
             file "${pkgs.writeText "${domain}.zone" ''
-              $TTL    604800
-              @       IN      SOA     ns.${domain}. admin.labrats.cc. (2024040605 3600 1800 604800 86400)
-              @       IN      NS      ns.${domain}.
-              ns      IN      A       10.32.40.42
-              plex    IN      A       10.32.40.41
-              sonarr  IN      A       10.32.40.43
-              radarr  IN      A       10.32.40.43
-              prowlarr IN     A       10.32.40.43
-              sabnzbd IN      A       10.32.40.43
-              minio-luna  IN  A       10.32.40.41
-              minio-juno  IN  A       10.32.40.43
-              cache   IN      A       10.32.40.42
+              $TTL        604800
+              @           IN      SOA     ns.${domain}. admin.labrats.cc. (2024040606 3600 1800 604800 86400)
+              @           IN      NS      ns.${domain}.
+              ns          IN      A       10.32.40.42
+              plex        IN      A       10.32.40.41
+              sonarr      IN      A       10.32.40.43
+              radarr      IN      A       10.32.40.43
+              prowlarr    IN      A       10.32.40.43
+              sabnzbd     IN      A       10.32.40.43
+              minio-luna  IN      A       10.32.40.41
+              minio-juno  IN      A       10.32.40.43
+              cache       IN      A       10.32.40.42
+              prometheus  IN      A       10.32.40.42
+              grafana     IN      A       10.32.40.42
             ''}";
           };
         ''

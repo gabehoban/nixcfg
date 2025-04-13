@@ -14,6 +14,8 @@
     # Host-specific service imports
     (configLib.moduleImport "services/minio.nix")
     (configLib.moduleImport "services/plex.nix")
+    # Monitoring
+    (configLib.moduleImport "services/node-exporter.nix")
 
     # Host-specific service configurations
     ./config-minio.nix

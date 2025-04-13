@@ -19,6 +19,8 @@
     (configLib.moduleImport "services/radarr.nix")
     (configLib.moduleImport "services/sabnzbd.nix")
     (configLib.moduleImport "services/recyclarr.nix")
+    # Monitoring
+    (configLib.moduleImport "services/node-exporter.nix")
 
     # Host-specific service configurations
     ./config-minio.nix

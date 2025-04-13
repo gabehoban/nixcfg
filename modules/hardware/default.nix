@@ -15,9 +15,6 @@
 
     # GPU modules
     ./hw-gpu-amd.nix # AMD GPU drivers and configuration
-
-    # Platform-specific optimizations
-    ./hw-platform-rpi.nix # Raspberry Pi optimizations
   ];
 
   # This module serves as an aggregator for hardware-specific configurations

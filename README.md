@@ -11,7 +11,7 @@ This repository contains my NixOS configurations, along with custom modules and 
 
 ```
 nixcfg/
-├── hosts/         # Machine-specific configurations (workstation and sekio)
+├── hosts/         # Machine-specific configurations (workstation and nuc hosts)
 ├── modules/       # Atomic functionality units organized by purpose
 ├── profiles/      # Pre-composed collections of modules for quick setup
 ├── lib/           # Helper functions that make Nix life easier

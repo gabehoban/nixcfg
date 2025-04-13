@@ -2,7 +2,7 @@
 #
 # Tailscale VPN service configuration with enhanced features
 #
-# Provides secure networking across machines with automatic connection, 
+# Provides secure networking across machines with automatic connection,
 # OAuth authentication, and DNS support. Includes configuration for firewall,
 # IP forwarding, and data persistence to maintain node identity across reboots.
 {

@@ -5,60 +5,33 @@
 {
   flake = {
     # Image configurations
-    images = let
-      # Library imports
-      inherit (inputs.nixpkgs) lib;
-      configLib = import ../lib { inherit lib inputs; };
-      
-      # Common arguments for image configuration
-      mkArgs = system: {
-        inherit inputs configLib;
-        outputs = self;
-        inherit (inputs) nixpkgs;
-        inherit system;
+    images =
+      let
+        # Library imports
+        inherit (inputs.nixpkgs) lib;
+        configLib = import ../lib { inherit lib inputs; };
+
+        # Common arguments for image configuration
+        mkArgs = system: {
+          inherit inputs configLib;
+          outputs = self;
+          inherit (inputs) nixpkgs;
+          inherit system;
+        };
+      in
+      {
+        # Workstation ISO image
+        workstation-iso = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = mkArgs "x86_64-linux";
+          modules = [
+            "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix"
+            (configLib.relativeToRoot "images/workstation.nix")
+            {
+              nixpkgs.overlays = [ self.overlays.default ];
+            }
+          ];
+        };
       };
-      
-      # Common Raspberry Pi image configuration
-      rpiImageModules = [
-        "${inputs.nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-        {
-          nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ];
-          sdImage.firmwareSize = 128;
-          sdImage.expandOnBoot = true;
-          boot.loader.generic-extlinux-compatible.enable = true;
-        }
-      ];
-    in {
-      # rpi-sekio SD card image
-      rpi-sekio = inputs.nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        specialArgs = mkArgs "aarch64-linux";
-        modules = [
-          (configLib.relativeToRoot "images/rpi-sekio.nix")
-        ] ++ rpiImageModules;
-      };
-      
-      # rpi-casio SD card image
-      rpi-casio = inputs.nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
-        specialArgs = mkArgs "aarch64-linux";
-        modules = [
-          (configLib.relativeToRoot "images/rpi-casio.nix")
-        ] ++ rpiImageModules;
-      };
-      
-      # Workstation ISO image
-      workstation-iso = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = mkArgs "x86_64-linux";
-        modules = [
-          "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-gnome.nix"
-          (configLib.relativeToRoot "images/workstation.nix")
-          {
-            nixpkgs.overlays = [ self.overlays.default ];
-          }
-        ];
-      };
-    };
   };
 }

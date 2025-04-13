@@ -14,39 +14,6 @@
   # Define deploy output for deploy-rs
   flake.deploy = {
     nodes = {
-      # Raspberry Pi NTP servers (aarch64-linux)
-      rpi-sekio = {
-        hostname = "rpi-sekio.local";
-        sshUser = "gabehoban";
-        profiles = {
-          system = {
-            user = "root";
-            path = inputs.deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rpi-sekio;
-            magicRollback = true;
-            remoteBuild = false;
-            autoRollback = true;
-            confirmTimeout = 300;
-          };
-        };
-        fastConnection = false;
-      };
-
-      # rpi-casio = {
-      #   hostname = "rpi-casio.local";
-      #   sshUser = "gabehoban";
-      #   profiles = {
-      #     system = {
-      #       user = "root";
-      #       path = inputs.deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.rpi-casio;
-      #       magicRollback = true;
-      #       remoteBuild = false;
-      #       autoRollback = true;
-      #       confirmTimeout = 300;
-      #     };
-      #   };
-      #   fastConnection = false;
-      # };
-
       # Intel NUC Homelab servers (x86_64-linux)
       nuc-luna = {
         hostname = "nuc-luna.local";

@@ -36,26 +36,6 @@
           ] ++ commonModules;
         };
 
-        # rpi-sekio configuration (aarch64-linux)
-        rpi-sekio = inputs.nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = mkArgs "aarch64-linux";
-          modules = [
-            (configLib.relativeToRoot "hosts/rpi-sekio")
-            { nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ]; }
-          ] ++ commonModules;
-        };
-
-        # rpi-casio configuration (aarch64-linux)
-        rpi-casio = inputs.nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = mkArgs "aarch64-linux";
-          modules = [
-            (configLib.relativeToRoot "hosts/rpi-casio")
-            { nixpkgs.overlays = [ (import ../overlays { inherit inputs; }).hardware ]; }
-          ] ++ commonModules;
-        };
-
         # Homelab hosts - all x86_64-linux
 
         # Luna configuration - Plex media server

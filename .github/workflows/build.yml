@@ -21,10 +21,6 @@ jobs:
             platform: x86-64-linux
           - host: nuc-juno
             platform: x86-64-linux
-          - host: rpi-casio
-            platform: aarch64-linux
-          - host: rpi-sekio
-            platform: aarch64-linux
     steps:
       - uses: actions/checkout@v4
       - name: Build and push system
