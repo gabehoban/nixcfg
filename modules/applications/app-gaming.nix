@@ -59,6 +59,8 @@
     ckan
     # Microcompositor for Steam games
     gamescope
+    # Minecraft Launcher
+    prismlauncher
   ];
 
   #
@@ -73,5 +75,8 @@
     ".steam"
     ".local/share/CKAN"
     ".local/share/Steam"
+
+    # Minecraft Launcher
+    ".local/share/PrismLauncher"
   ];
 }
