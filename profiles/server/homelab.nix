@@ -24,7 +24,6 @@
     # Services
     (configLib.moduleImport "services/ssh.nix")
     (configLib.moduleImport "services/tailscale.nix")
-    (configLib.moduleImport "services/monitoring.nix")
     (configLib.moduleImport "services/zram.nix")
 
     # User configuration
