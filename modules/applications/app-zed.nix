@@ -34,6 +34,7 @@
       "one-dark-pro"
       "sql"
       "toml"
+      "terraform"
     ];
 
     # User preferences and settings
