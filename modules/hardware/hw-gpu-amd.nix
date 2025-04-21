@@ -10,11 +10,14 @@
   # Kernel and boot configuration
   #
   boot.initrd.kernelModules = [ "amdgpu" ];
-  # Enable all power features and fix display timing issues
+  # AMD GPU firmware loading in early boot
+  boot.initrd.availableKernelModules = [ "amdgpu" ];
+  # More stable GPU configuration parameters
   boot.kernelParams = [
-    "amdgpu.ppfeaturemask=0xffffffff"
     "amdgpu.dcfeaturemask=1"
     "amdgpu.asyncdma=0"
+    "amdgpu.dpm=1"
+    "amdgpu.vm_fragment_size=9"
   ];
 
   #
@@ -78,6 +81,14 @@
   nixpkgs.config = {
     rocmSupport = true;
   };
+  
+  #
+  # Firmware configuration
+  #
+  hardware.firmware = with pkgs; [
+    linux-firmware
+  ];
+  hardware.enableRedistributableFirmware = true;
 
   #
   # GPU monitoring and management tools
