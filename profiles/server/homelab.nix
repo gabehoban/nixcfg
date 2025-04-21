@@ -9,7 +9,7 @@
   ...
 }:
 {
-  #TODO: FIX SECRETS
+  # Common configuration for homelab servers
   # ───────────────────────────────────────────
   # Module Imports
   # ───────────────────────────────────────────

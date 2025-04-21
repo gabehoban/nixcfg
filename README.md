@@ -23,7 +23,7 @@ nixcfg/
 
 - **Multi-architecture Support** - Optimized for both x86_64 and aarch64 systems
 - **AMD Hardware Support** - Optimized for AMD CPUs and GPUs
-- **Raspberry Pi Support** - Optimized for Raspberry Pi 4 with GPS/NTP capabilities
+- **NUC Hardware Support** - Optimized for Intel NUC-based homelab servers
 - **GNOME Desktop** - Sleek, customized GNOME environment with carefully selected extensions
 - **Impermanence** - System state persistence where you want it, fresh boots where you don't
 - **Remote Deployment** - Build on powerful machines, deploy to resource-constrained devices
@@ -38,26 +38,26 @@ nixcfg/
 # Switch to workstation configuration
 nixos-rebuild switch --flake .#workstation
 
-# Deploy to sekio using colmena
-colmena apply --on rpi-sekio
+# Deploy to a NUC using deploy-rs
+deploy .#nuc-juno
 ```
 
 ### Remote Deployment
 
-This repository uses [Colmena](https://github.com/zhaofengli/colmena) for remote deployment, which builds the system on the more powerful workstation and deploys to the target machines.
+This repository uses [deploy-rs](https://github.com/serokell/deploy-rs) for remote deployment, which builds the system on the more powerful workstation and deploys to the target machines.
 
 ```bash
-# Build and deploy sekio configuration
-colmena apply --on rpi-sekio
+# Build and deploy juno configuration
+deploy .#nuc-juno
 
 # Apply to all nodes
-colmena apply
+deploy .
 
-# Build without deploying
-colmena build
+# Check what would be deployed without deploying
+deploy . --dry-run
 
 # Deploy to specific nodes
-colmena apply --on nuc-juno nuc-luna
+deploy .#nuc-juno .#nuc-luna
 ```
 
 ### Customizing for Your Machine
@@ -66,7 +66,7 @@ colmena apply --on nuc-juno nuc-luna
 2. Set up hardware configs in `hosts/your-machine/hardware/`
 3. Create a `default.nix` that imports the modules and profiles you need
 4. Add your machine to `flake.nix` under `nixosConfigurations`
-5. Optionally add your machine to the Colmena configuration in parts/colmena.nix
+5. Optionally add your machine to the deploy-rs configuration in parts/deploy.nix
 
 ## 🧰 Working with Modules
 

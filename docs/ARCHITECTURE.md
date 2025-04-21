@@ -67,7 +67,7 @@ Profiles pre-compose collections of modules for common use cases:
 - **core/minimal.nix**: Essential system services and settings
 - **desktop/gnome.nix**: Complete GNOME desktop setup
 - **server/homelab.nix**: Configuration for home lab servers
-- **server/gps-ntp.nix**: Configuration for GPS-based NTP servers
+- **server/build-host.nix**: Configuration for build server hosts
 
 Profiles simplify configuration by bundling related modules together.
 
@@ -108,7 +108,7 @@ Custom packages are defined in the `pkgs/` directory and made available through 
 ## Deployment Flow
 
 1. Configuration is built locally or on a build host
-2. The built system is deployed to target machines using deploy-rs or colmena
+2. The built system is deployed to target machines using deploy-rs
 3. For resource-constrained devices (like RPis), building is done on more powerful machines
 
 ## Design Principles
