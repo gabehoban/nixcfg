@@ -38,6 +38,12 @@
   };
 
   age.secrets = {
+    graylog-secret = {
+        rekeyFile = ../../secrets/graylog-secret.age;
+        owner = "graylog";
+        group = "graylog";
+        mode = "0440";
+    };
     graylog-password = {
         rekeyFile = ../../secrets/graylog-password.age;
         owner = "graylog";
@@ -52,21 +58,27 @@
     };
   };
 
-  systemd.services.graylog.preStart = ''
-    hash=$(cat ${config.services.graylog.passwordSecret} | ${pkgs.perl}/bin/shasum -a 256 | ${pkgs.coreutils-full}/bin/cut -d " " -f1)
-    email_pass=$(cat ${config.age.secrets.graylog-password.path})
-    ${pkgs.gnused}/bin/sed "s/root_password_sha2.*/root_password_sha2 = $hash/g" $GRAYLOG_CONF > /etc/graylog.conf
-    ${pkgs.gnused}/bin/sed "s/transport_email_auth_password.*/transport_email_auth_password = $email_pass/g" $GRAYLOG_CONF > /etc/graylog.conf
-    export GRAYLOG_CONF="/etc/graylog.conf"
-  '';
+  systemd.tmpfiles.rules = [ "f /etc/graylog.conf - graylog graylog - -" ];
+  systemd.services.graylog = {
+    preStart = ''
+        secret=$(cat ${config.age.secrets.graylog-secret.path})
+        password=$(cat ${config.age.secrets.graylog-password.path})
+        email_pass=$(cat ${config.age.secrets.graylog-email-pass.path})
+        ${pkgs.gnused}/bin/sed \
+            -e "s/password_secret.*/password_secret = $secret/g" \
+            -e "s/root_password_sha2.*/root_password_sha2 = $password/g" \
+            -e "s/transport_email_auth_password.*/transport_email_auth_password = $email_pass/g" $GRAYLOG_CONF > /etc/graylog.conf
+        export GRAYLOG_CONF=/etc/graylog.conf
+    '';
+  };
 
   services = {
     graylog = {
       enable = true;
       package = pkgs.graylog-6_0;
       rootUsername = "gabehoban";
-      rootPasswordSha2 = ""; # will be set to correct value by preStart command
-      passwordSecret = config.age.secrets.graylog-password.path;
+      rootPasswordSha2 = "";
+      passwordSecret = "";
       extraConfig = ''
         http_external_uri = https://logs.labrats.cc/
         java.net.preferIPv4Stack = true
