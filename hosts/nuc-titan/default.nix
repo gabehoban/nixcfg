@@ -18,6 +18,7 @@
     (configLib.moduleImport "services/cloudflared.nix")
     (configLib.moduleImport "services/github-runner.nix")
     (configLib.moduleImport "services/monitoring.nix")
+    (configLib.moduleImport "services/graylog.nix")
   ];
 
   # Allow the cloudflared package which is currently marked as broken
