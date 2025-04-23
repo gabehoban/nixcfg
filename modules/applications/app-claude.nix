@@ -2,7 +2,9 @@
 #
 # Claude AI client configuration
 {
+  inputs,
   pkgs,
+  system,
   ...
 }:
 {
@@ -10,9 +12,6 @@
   # Claude Desktop application and dependencies
   #
   environment.systemPackages = [
-    # UV Python package manager (dependency for codemcp)
-    pkgs.uv
-
     # Claude client with FHS compatibility
     pkgs.claude-code
   ];
@@ -21,6 +20,11 @@
   # Claude Desktop configuration
   #
   home-manager.users.gabehoban = {
+    home.packages = [
+      pkgs.uv
+      inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
+    ];
+
     # Configure Claude Desktop with codemcp support
     home.file.".config/Claude/claude_desktop_config.json".text = ''
       {
