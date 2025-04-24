@@ -17,7 +17,7 @@
 {
   imports = [ ./nginx.nix ];
 
-  networking.firewall.allowedUDPPorts = [ 12201 ];
+  networking.firewall.allowedUDPPorts = [ 12201 5555 ];
 
   users.groups = {
     graylog = { };
