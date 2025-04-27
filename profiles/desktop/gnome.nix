@@ -27,5 +27,6 @@
     (configLib.moduleImport "applications/app-gaming.nix")
     (configLib.moduleImport "applications/app-remmina.nix")
     (configLib.moduleImport "applications/app-zed.nix")
+    (configLib.moduleImport "applications/cli-youtubedl.nix")
   ];
 }
