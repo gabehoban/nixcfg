@@ -13,7 +13,7 @@
 
   services.plex = {
     enable = true;
-    openFirewall = false; # We'll use nginx instead
+    openFirewall = true;
     user = "plex";
     group = "media";
 
