@@ -16,4 +16,4 @@ nixos.wsl
 .idea/
 *.swp
 *.swo
-codemcp.toml
+/*.toml
