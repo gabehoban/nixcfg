@@ -27,23 +27,18 @@
   networking = {
     hostName = "nuc-titan";
     hostId = "cafef00f"; # Required for ZFS
-    useDHCP = false;
+    useDHCP = true; # Enable DHCP for global configuration
 
-    # Static IP configuration
+    # Enable both IPv4 and IPv6
+    enableIPv6 = true;
+
+    # Enable DHCP specifically for eth0 interface
     interfaces.eth0 = {
-      ipv4.addresses = [
-        {
-          address = "10.32.40.42";
-          prefixLength = 24;
-        }
-      ];
+      useDHCP = true;
     };
 
-    defaultGateway = "10.32.40.254";
-    nameservers = [
-      "10.32.40.254"
-      "1.1.1.1"
-    ];
+    # Remove static IP configuration as it's now handled by DHCP with router static assignment
+    # The router has static DHCP entries for this host
 
     # Add host entries for the homelab
     hosts = {

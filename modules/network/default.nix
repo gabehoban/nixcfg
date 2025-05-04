@@ -13,6 +13,8 @@
   imports = [
     # Basic networking configuration
     ./basic.nix
+    # IPv6 support
+    ./ipv6.nix
     # Standard NixOS firewall
     ./net-firewall.nix
   ];
