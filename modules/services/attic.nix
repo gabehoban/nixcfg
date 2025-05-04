@@ -8,7 +8,7 @@
 }:
 
 {
-  imports = [ ./nginx.nix ];
+  imports = [ ./web-nginx.nix ];
 
   users = {
     groups.attic = { };

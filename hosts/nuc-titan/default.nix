@@ -13,12 +13,11 @@
     (configLib.profileImport "server/build-host.nix")
 
     # Service modules
-    (configLib.moduleImport "services/bind.nix")
-    (configLib.moduleImport "services/attic.nix")
-    (configLib.moduleImport "services/cloudflared.nix")
-    (configLib.moduleImport "services/github-runner.nix")
-    (configLib.moduleImport "services/monitoring.nix")
-    (configLib.moduleImport "services/graylog.nix")
+    (configLib.moduleImport "services/net-bind.nix")
+    (configLib.moduleImport "services/storage-attic.nix")
+    (configLib.moduleImport "services/web-cloudflared.nix")
+    (configLib.moduleImport "services/dev-github-runner.nix")
+    (configLib.moduleImport "services/mon-monitoring.nix")
   ];
 
   # Allow the cloudflared package which is currently marked as broken

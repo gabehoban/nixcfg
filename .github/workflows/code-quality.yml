@@ -1,0 +1,62 @@
+name: Code Quality
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v24
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          nix profile install nixpkgs#nixfmt-plus
+          nix profile install nixpkgs#statix
+
+      - name: Check formatting
+        run: |
+          nixfmt-plus --check .
+
+      - name: Run linter
+        run: |
+          statix check .
+
+  module-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check module headers
+        run: |
+          # Check that all .nix files (except flake.nix) have proper headers
+          failed=0
+          for file in $(find . -name "*.nix" -type f ! -name "flake.nix" ! -path "*/.*"); do
+            if ! head -n 1 "$file" | grep -q "^#"; then
+              echo "Missing header in: $file"
+              failed=1
+            fi
+          done
+          exit $failed
+
+      - name: Check for consistent patterns
+        run: |
+          # Check for inconsistent lib usage
+          failed=0
+
+          # Find files using 'with lib;' and also explicit lib.
+          for file in $(find . -name "*.nix" -type f); do
+            if grep -q "with lib;" "$file" && grep -q "lib\." "$file"; then
+              echo "Mixed lib usage in: $file"
+              failed=1
+            fi
+          done
+
+          exit $failed

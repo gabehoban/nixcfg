@@ -14,7 +14,7 @@
     # Basic networking configuration
     ./basic.nix
     # Standard NixOS firewall
-    ./firewall.nix
+    ./net-firewall.nix
   ];
 
   # Define trusted networks for use throughout the configuration
@@ -25,7 +25,7 @@
         loopback = "127.0.0.1/8";
         homeNetwork = "10.32.0.0/16"; # More specific home network range
       };
-      description = "Dictionary of trusted networks for firewall and security configurations";
+      description = lib.mdDoc "Dictionary of trusted networks for firewall and security configurations";
     };
   };
 

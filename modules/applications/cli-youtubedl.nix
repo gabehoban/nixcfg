@@ -1,3 +1,7 @@
+# modules/applications/cli-youtubedl.nix
+#
+# YouTube downloader (yt-dlp) configuration
+# Provides media downloading capabilities with sponsorblock integration
 { lib, pkgs, ... }:
 {
   home-manager.users.gabehoban = {

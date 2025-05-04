@@ -22,9 +22,8 @@
     (configLib.profileImport "core/minimal.nix")
 
     # Services
-    (configLib.moduleImport "services/ssh.nix")
-    (configLib.moduleImport "services/tailscale.nix")
-    (configLib.moduleImport "services/zram.nix")
+    (configLib.moduleImport "services/sys-ssh.nix")
+    (configLib.moduleImport "services/sys-zram.nix")
 
     # User configuration
     (configLib.moduleImport "users/gabehoban.nix")

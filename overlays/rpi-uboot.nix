@@ -1,3 +1,7 @@
+# overlays/rpi-uboot.nix
+#
+# Raspberry Pi U-Boot overlay
+# Fixes boot issues and allows cross-compilation for RPi systems
 _: _final: prev:
 
 {

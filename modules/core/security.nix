@@ -7,8 +7,6 @@
   ...
 }:
 
-with lib;
-
 let
   # SSH hardening common settings
   sshSettings = {
@@ -67,7 +65,7 @@ in
     settings = sshSettings;
 
     # Use keyfiles from persistence if impermanence is enabled
-    hostKeys = mkIf config.impermanence.enable persistentHostKeys;
+    hostKeys = lib.mkIf config.impermanence.enable persistentHostKeys;
   };
 
   # Basic firewall configuration

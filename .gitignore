@@ -17,3 +17,4 @@ nixos.wsl
 *.swp
 *.swo
 /*.toml
+/todo/

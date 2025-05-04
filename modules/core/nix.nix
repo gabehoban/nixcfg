@@ -11,8 +11,6 @@
   ...
 }:
 
-with lib;
-
 let
   # Nix build optimization settings
   buildSettings = {

@@ -88,6 +88,49 @@ Adding a new module is as simple as creating a .nix file in the appropriate dire
 3. **Maintainable** - Small, focused modules with clear purposes
 4. **Reproducible** - Same config = same result, every time
 5. **Upgradable** - Flakes pin inputs for deterministic builds while making updates straightforward
+6. **Consistent** - Standardized code style and patterns across all modules
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](./docs/) directory:
+
+- **[Getting Started](./docs/README.md)** - Quick start guide for new users
+- **[Architecture](./docs/ARCHITECTURE.md)** - System design and structure
+- **[Adding Hosts](./docs/ADDING_HOSTS.md)** - Step-by-step host setup
+- **[Deployment](./docs/DEPLOYMENT.md)** - Deployment procedures
+- **[Secret Management](./docs/SECRETS.md)** - YubiKey and agenix setup
+- **[Troubleshooting](./docs/TROUBLESHOOTING.md)** - Common issues and fixes
+- **[Backup & Recovery](./docs/BACKUP_RECOVERY.md)** - Data protection
+
+## 🛠️ Development
+
+### Code Quality Tools
+
+- **Style Checker**: Run `./scripts/check-style.sh` to validate code style
+- **Module Generator**: Use `./scripts/new-module.sh` to create new modules
+- **Pre-commit Hooks**: Install with `pre-commit install` for automatic checks
+- **CI Pipeline**: Automated quality checks on all pull requests
+
+### Creating New Modules
+
+```bash
+# Create a new service module
+./scripts/new-module.sh service nginx web
+
+# Create a new application module
+./scripts/new-module.sh app firefox desktop
+
+# Create a new hardware module
+./scripts/new-module.sh hardware gpu-nvidia
+```
+
+### Code Style
+
+All modules must follow our [Style Guide](./docs/STYLE_GUIDE.md). Key points:
+- Use explicit `lib.` prefix instead of `with lib;`
+- Include module header comments
+- Follow consistent naming conventions
+- Add proper documentation and examples
 
 ## 📜 License
 

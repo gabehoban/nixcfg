@@ -23,62 +23,62 @@ in
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   # Define options for customization in host configurations
-  options.impermanence = with lib; {
+  options.impermanence = {
     # Enable/disable impermanence
-    enable = mkOption {
-      type = types.bool;
+    enable = lib.mkOption {
+      type = lib.types.bool;
       default = false;
-      description = "Enable impermanence for ephemeral state management";
+      description = lib.mdDoc "Enable impermanence for ephemeral state management";
     };
 
     # System-level directories
-    directories = mkOption {
+    directories = lib.mkOption {
       default = [ ];
-      description = "List of system directories to make persistent";
+      description = lib.mdDoc "List of system directories to make persistent";
     };
 
     # System-level files
-    files = mkOption {
-      type = types.listOf types.str;
+    files = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = "List of system files to make persistent";
+      description = lib.mdDoc "List of system files to make persistent";
     };
 
     # User-specific configuration
-    users = mkOption {
-      type = types.attrsOf (
-        types.submodule {
+    users = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.submodule {
           options = {
-            directories = mkOption {
-              type = types.listOf (
-                types.either types.str (
-                  types.submodule {
+            directories = lib.mkOption {
+              type = lib.types.listOf (
+                lib.types.either lib.types.str (
+                  lib.types.submodule {
                     options = {
-                      directory = mkOption {
-                        type = types.str;
-                        description = "Path to directory";
+                      directory = lib.mkOption {
+                        type = lib.types.str;
+                        description = lib.mdDoc "Path to directory";
                       };
-                      mode = mkOption {
-                        type = types.str;
-                        description = "Permissions mode";
+                      mode = lib.mkOption {
+                        type = lib.types.str;
+                        description = lib.mdDoc "Permissions mode";
                       };
                     };
                   }
                 )
               );
               default = [ ];
-              description = "User directories to make persistent";
+              description = lib.mdDoc "User directories to make persistent";
             };
-            files = mkOption {
-              type = types.listOf types.str;
+            files = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
               default = [ ];
-              description = "User files to make persistent";
+              description = lib.mdDoc "User files to make persistent";
             };
           };
         }
       );
       default = { };
-      description = "Per-user persistence configuration";
+      description = lib.mdDoc "Per-user persistence configuration";
     };
   };
 

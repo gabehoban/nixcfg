@@ -12,10 +12,10 @@
     (configLib.profileImport "server/homelab.nix")
 
     # Host-specific service imports
-    (configLib.moduleImport "services/minio.nix")
-    (configLib.moduleImport "services/plex.nix")
+    (configLib.moduleImport "services/storage-minio.nix")
+    (configLib.moduleImport "services/media-plex.nix")
     # Monitoring
-    (configLib.moduleImport "services/node-exporter.nix")
+    (configLib.moduleImport "services/mon-node-exporter.nix")
 
     # Host-specific service configurations
     ./config-minio.nix

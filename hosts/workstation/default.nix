@@ -34,9 +34,9 @@
     # ───────────────────────────────────────────
     # Additional Services (only include what's needed)
     # ───────────────────────────────────────────
-    (configLib.moduleImport "services/ssh.nix")
-    (configLib.moduleImport "services/yubikey.nix")
-    (configLib.moduleImport "services/zram.nix")
+    (configLib.moduleImport "services/sys-ssh.nix")
+    (configLib.moduleImport "services/sec-yubikey.nix")
+    (configLib.moduleImport "services/sys-zram.nix")
 
     # ───────────────────────────────────────────
     # User Configuration

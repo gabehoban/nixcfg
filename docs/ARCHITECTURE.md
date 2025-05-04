@@ -48,8 +48,14 @@ Host configurations compose modules and profiles to build the complete system.
 
 ### 3. Module System
 
-Modules are organized by functional domain:
+Modules are organized by functional domain and use a **direct import** design:
 
+- **No Options**: Modules directly configure the system when imported
+- **Explicit Control**: Configuration is managed by which modules are imported
+- **Module Variants**: Different configurations are separate modules (e.g., `nginx.nix` vs `nginx-ssl.nix`)
+- **Clear Dependencies**: Modules document but don't auto-import their dependencies
+
+Module categories:
 - **core/**: Essential system functionality (boot, shell, locale, etc.)
 - **applications/**: User-facing software packages and configurations
 - **desktop/**: Desktop environment settings and components
@@ -58,7 +64,7 @@ Modules are organized by functional domain:
 - **services/**: System and network services
 - **users/**: User account configurations
 
-Each module is designed to be atomic, focusing on a single responsibility.
+This direct import approach ensures predictable behavior and explicit configuration control.
 
 ### 4. Profile System
 
@@ -84,11 +90,22 @@ These functions reduce duplication and standardize common operations.
 
 ### 6. Secrets Management
 
-The repository uses `agenix` for secret management with host-specific rekeys:
+The repository uses `agenix` with `agenix-rekey` for a two-layer secret management system:
 
-- Secrets are encrypted with age and can only be decrypted on the target hosts
-- Each host has its own set of rekey files for its specific secrets
-- The `secrets/` directory contains all encrypted secrets
+1. **Master Encryption**: Secrets are encrypted with YubiKey public keys, providing hardware-based security
+2. **Host-specific Rekeying**: agenix-rekey automatically re-encrypts secrets for each host's SSH key
+3. **Runtime Decryption**: Hosts decrypt their specific secrets during boot using their SSH keys
+
+This approach ensures:
+- YubiKey hardware security for master secrets
+- No need for YubiKey during deployments
+- Host isolation (each host can only decrypt its own secrets)
+- All secrets can be safely stored in version control
+
+Directory structure:
+- `/secrets/*.age`: Master secrets encrypted with YubiKey
+- `/secrets/rekeyed/<hostname>/`: Host-specific rekeyed secrets
+- Each host has its own set of re-encrypted secrets
 
 ### 7. Package Management
 

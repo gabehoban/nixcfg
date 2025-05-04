@@ -1,0 +1,24 @@
+# Pre-commit configuration for Nix code quality
+repos:
+  - repo: local
+    hooks:
+      - id: nix-format
+        name: Format Nix files
+        entry: nixfmt-plus
+        language: system
+        files: '\.nix$'
+        pass_filenames: true
+
+      - id: nix-lint
+        name: Lint Nix files
+        entry: statix check
+        language: system
+        files: '\.nix$'
+        pass_filenames: false
+
+      - id: check-style
+        name: Check Nix style conventions
+        entry: scripts/check-style.sh
+        language: script
+        files: '\.nix$'
+        pass_filenames: true

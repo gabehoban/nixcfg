@@ -14,19 +14,19 @@
     # Desktop environment
     (configLib.moduleImport "desktop/desktop-gnome.nix")
     (configLib.moduleImport "desktop/desktop-fonts.nix")
-    (configLib.moduleImport "desktop/desktop-stylix.nix")
+    (configLib.moduleImport "desktop/desktop-theme.nix")
 
     # Common desktop services
-    (configLib.moduleImport "services/audio.nix")
+    (configLib.moduleImport "services/sys-audio.nix")
 
     # Applications
-    (configLib.moduleImport "applications/app-1password.nix")
-    (configLib.moduleImport "applications/app-claude.nix")
-    (configLib.moduleImport "applications/app-discord.nix")
-    (configLib.moduleImport "applications/app-firefox.nix")
-    (configLib.moduleImport "applications/app-gaming.nix")
-    (configLib.moduleImport "applications/app-remmina.nix")
-    (configLib.moduleImport "applications/app-zed.nix")
+    (configLib.moduleImport "applications/desktop-1password.nix")
+    (configLib.moduleImport "applications/desktop-claude.nix")
+    (configLib.moduleImport "applications/desktop-discord.nix")
+    (configLib.moduleImport "applications/desktop-firefox.nix")
+    (configLib.moduleImport "applications/desktop-steam.nix")
+    (configLib.moduleImport "applications/desktop-remmina.nix")
+    (configLib.moduleImport "applications/dev-zed.nix")
     (configLib.moduleImport "applications/cli-youtubedl.nix")
   ];
 }

@@ -81,7 +81,7 @@
   nixpkgs.config = {
     rocmSupport = true;
   };
-  
+
   #
   # Firmware configuration
   #

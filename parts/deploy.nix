@@ -16,7 +16,7 @@
     nodes = {
       # Intel NUC Homelab servers (x86_64-linux)
       nuc-luna = {
-        hostname = "nuc-luna.local";
+        hostname = "10.32.40.41";
         sshUser = "gabehoban";
         profiles = {
           system = {
@@ -31,13 +31,13 @@
         fastConnection = true;
       };
 
-      nuc-juno = {
-        hostname = "nuc-juno.local";
+      nuc-titan = {
+        hostname = "10.32.40.42";
         sshUser = "gabehoban";
         profiles = {
           system = {
             user = "root";
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nuc-juno;
+            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nuc-titan;
             magicRollback = true;
             remoteBuild = false;
             autoRollback = true;
@@ -47,13 +47,13 @@
         fastConnection = true;
       };
 
-      nuc-titan = {
-        hostname = "nuc-titan.local";
+      nuc-juno = {
+        hostname = "10.32.40.43";
         sshUser = "gabehoban";
         profiles = {
           system = {
             user = "root";
-            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nuc-titan;
+            path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nuc-juno;
             magicRollback = true;
             remoteBuild = false;
             autoRollback = true;

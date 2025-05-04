@@ -1,3 +1,7 @@
+# pkgs/all/zsh-histdb-skim.nix
+#
+# Zsh history database searcher with skim integration
+# Provides fast fuzzy search through shell history using histdb
 {
   fetchFromGitHub,
   rustPlatform,

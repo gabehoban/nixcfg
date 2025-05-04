@@ -12,15 +12,15 @@
     (configLib.profileImport "server/homelab.nix")
 
     # Host-specific service imports
-    (configLib.moduleImport "services/minio.nix")
+    (configLib.moduleImport "services/storage-minio.nix")
     # Download services
-    (configLib.moduleImport "services/prowlarr.nix")
-    (configLib.moduleImport "services/sonarr.nix")
-    (configLib.moduleImport "services/radarr.nix")
-    (configLib.moduleImport "services/sabnzbd.nix")
-    (configLib.moduleImport "services/recyclarr.nix")
+    (configLib.moduleImport "services/media-prowlarr.nix")
+    (configLib.moduleImport "services/media-sonarr.nix")
+    (configLib.moduleImport "services/media-radarr.nix")
+    (configLib.moduleImport "services/media-sabnzbd.nix")
+    (configLib.moduleImport "services/media-recyclarr.nix")
     # Monitoring
-    (configLib.moduleImport "services/node-exporter.nix")
+    (configLib.moduleImport "services/mon-node-exporter.nix")
 
     # Host-specific service configurations
     ./config-minio.nix

@@ -10,7 +10,7 @@
   imports = [
     # Core system modules
     (configLib.moduleImport "core/boot.nix")
-    (configLib.moduleImport "core/direnv.nix")
+    (configLib.moduleImport "core/shell/direnv.nix")
     (configLib.moduleImport "core/git.nix")
     (configLib.moduleImport "core/impermanence.nix")
     (configLib.moduleImport "core/locale.nix")
@@ -18,14 +18,11 @@
     (configLib.moduleImport "core/packages.nix")
     (configLib.moduleImport "core/secrets.nix")
     (configLib.moduleImport "core/security.nix")
-    (configLib.moduleImport "core/starship.nix")
-    (configLib.moduleImport "core/zsh.nix")
+    (configLib.moduleImport "core/shell/starship.nix")
+    (configLib.moduleImport "core/shell/zsh.nix")
 
     # Network modules (flattened structure)
     (configLib.moduleImport "network/default.nix")
-
-    # Service modules (flattened structure)
-    (configLib.moduleImport "services/tailscale.nix")
   ];
 
   # Enable non-free firmware
