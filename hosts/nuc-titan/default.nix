@@ -13,7 +13,6 @@
     (configLib.profileImport "server/build-host.nix")
 
     # Service modules
-    (configLib.moduleImport "services/net-bind.nix")
     (configLib.moduleImport "services/storage-attic.nix")
     (configLib.moduleImport "services/web-cloudflared.nix")
     (configLib.moduleImport "services/dev-github-runner.nix")

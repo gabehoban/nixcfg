@@ -57,114 +57,112 @@
         '')
         # Regular initialization
         (lib.mkAfter ''
-          # =====================
-          # Widget and hook setup
-          # =====================
-          autoload -U add-zle-hook-widget
+                    # =====================
+                    # Widget and hook setup
+                    # =====================
+                    autoload -U add-zle-hook-widget
 
-          # Fix autosuggestions with history widgets
-          # See https://github.com/zsh-users/zsh-autosuggestions/issues/619
-          ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
-            history-beginning-search-backward-end
-            history-beginning-search-forward-end
+                    # Fix autosuggestions with history widgets
+                    # See https://github.com/zsh-users/zsh-autosuggestions/issues/619
+                    ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
+                      history-beginning-search-backward-end
+                      history-beginning-search-forward-end
+                    )
+
+                    # =======================
+                    # Completion style config
+                    # =======================
+
+                    # Git checkout completion: don't sort (show in order of recency)
+                    zstyle ':completion:*:git-checkout:*' sort false
+
+                    # Enable group descriptions in completions
+                    zstyle ':completion:*:descriptions' format '[%d]'
+
+                    # Always show completion menu
+                    zstyle ':completion:*' menu yes
+
+                    # Preview directories when completing cd
+                    zstyle ':fzf-tab:complete:cd:*' fzf-preview \
+                      'ls -lAhF --group-directories-first --show-control-chars --quoting-style=escape --color=always $realpath'
+                    zstyle ':fzf-tab:complete:cd:*' popup-pad 20 0
+
+                    # Don't insert tabs when there's no completion available
+                    zstyle ':completion:*' insert-tab false
+
+                    # Don't automatically insert the first match even if unique
+                    zstyle ':completion:*' insert-unambiguous false
+
+                    # Show directories first in completion lists
+                    zstyle ':completion:*' list-dirs-first true
+
+                    # Show original input for expansion/approximate completions
+                    zstyle ':completion:*' original true
+
+                    # Treat multiple slashes as a single / (like UNIX does)
+                    zstyle ':completion:*' squeeze-slashes true
+
+                    # Show detailed completion info
+                    zstyle ':completion:*' verbose true
+
+                    # Enable ".." as a completion option
+                    zstyle ':completion:*' special-dirs ..
+
+                    # Case-insensitive completion
+                    zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+                    # ================
+                    # History settings
+                    # ================
+
+                    # Ignore patterns for history
+                    HISTORY_IGNORE_REGEX=$(cat <<'EOF'
+          ^(.|. |..|.. |rm .*|rmd .*|git fixup.*|git unstash|git stash.*|git checkout -f.*)$
+          EOF
           )
+                    function zshaddhistory() {
+                      emulate -L zsh
+                      [[ ! $1 =~ "$HISTORY_IGNORE_REGEX" ]]
+                    }
 
-          # =======================
-          # Completion style config
-          # =======================
+                    # =============
+                    # Shell options
+                    # =============
 
-          # Git checkout completion: don't sort (show in order of recency)
-          zstyle ':completion:*:git-checkout:*' sort false
+                    # Globbing and matching
+                    setopt nomatch        # Error on patterns with no matches
+                    setopt noextendedglob # No extended globbing
+                    setopt noglobdots     # Don't match dotfiles with *
+                    setopt hash_list_all  # Hash command path on completion
 
-          # Enable group descriptions in completions
-          zstyle ':completion:*:descriptions' format '[%d]'
+                    # Directory navigation
+                    setopt auto_cd           # Change directory by typing path
+                    setopt auto_pushd        # Push dirs onto directory stack
+                    setopt pushd_ignore_dups # Don't duplicate dirs in stack
 
-          # Always show completion menu
-          zstyle ':completion:*' menu yes
+                    # Process handling
+                    setopt long_list_jobs # Show PID when suspending jobs
+                    setopt nohup          # Don't send SIGHUP on shell exit
+                    setopt notify         # Report job status immediately
 
-          # Preview directories when completing cd
-          zstyle ':fzf-tab:complete:cd:*' fzf-preview \
-            'ls -lAhF --group-directories-first --show-control-chars --quoting-style=escape --color=always $realpath'
-          zstyle ':fzf-tab:complete:cd:*' popup-pad 20 0
+                    # Shell interface
+                    setopt interactive_comments # Allow comments in interactive shells
+                    setopt nobeep             # Don't beep
 
-          # Don't insert tabs when there's no completion available
-          zstyle ':completion:*' insert-tab false
+                    # Completion options
+                    setopt nocorrect        # Don't correct commands
+                    setopt complete_in_word # Allow completion within words
+                    setopt no_correct_all   # Don't autocorrect
+                    setopt auto_list        # List choices on ambiguous tab
+                    setopt auto_menu        # Use completion menu when requested
+                    setopt always_to_end    # Move cursor to end after completion
 
-          # Don't automatically insert the first match even if unique
-          zstyle ':completion:*' insert-unambiguous false
+                    export GPG_TTY=`tty`
 
-          # Show directories first in completion lists
-          zstyle ':completion:*' list-dirs-first true
-
-          # Show original input for expansion/approximate completions
-          zstyle ':completion:*' original true
-
-          # Treat multiple slashes as a single / (like UNIX does)
-          zstyle ':completion:*' squeeze-slashes true
-
-          # Show detailed completion info
-          zstyle ':completion:*' verbose true
-
-          # Enable ".." as a completion option
-          zstyle ':completion:*' special-dirs ..
-
-          # Case-insensitive completion
-          zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-          # ================
-          # History settings
-          # ================
-
-          # Ignore patterns for history
-          HISTORY_IGNORE_REGEX=$(cat <<'EOF'
-^(.|. |..|.. |rm .*|rmd .*|git fixup.*|git unstash|git stash.*|git checkout -f.*)$
-EOF
-)
-          function zshaddhistory() {
-            emulate -L zsh
-            [[ ! $1 =~ "$HISTORY_IGNORE_REGEX" ]]
-          }
-
-          # =============
-          # Shell options
-          # =============
-
-          # Globbing and matching
-          setopt nomatch        # Error on patterns with no matches
-          setopt noextendedglob # No extended globbing
-          setopt noglobdots     # Don't match dotfiles with *
-          setopt hash_list_all  # Hash command path on completion
-
-          # Directory navigation
-          setopt auto_cd           # Change directory by typing path
-          setopt auto_pushd        # Push dirs onto directory stack
-          setopt pushd_ignore_dups # Don't duplicate dirs in stack
-
-          # Process handling
-          setopt long_list_jobs # Show PID when suspending jobs
-          setopt nohup          # Don't send SIGHUP on shell exit
-          setopt notify         # Report job status immediately
-
-          # Shell interface
-          setopt interactive_comments # Allow comments in interactive shells
-          setopt nobeep             # Don't beep
-
-          # Completion options
-          setopt nocorrect        # Don't correct commands
-          setopt complete_in_word # Allow completion within words
-          setopt no_correct_all   # Don't autocorrect
-          setopt auto_list        # List choices on ambiguous tab
-          setopt auto_menu        # Use completion menu when requested
-          setopt always_to_end    # Move cursor to end after completion
-
-          export GPG_TTY=`tty`
-
-          # Initialize any-nix-shell and hook it into zsh
-          any-nix-shell zsh --info-right | source /dev/stdin
+                    # Initialize any-nix-shell and hook it into zsh
+                    any-nix-shell zsh --info-right | source /dev/stdin
         '')
       ];
-
-
 
       # Zsh plugins
       plugins = [

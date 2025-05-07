@@ -1,7 +1,7 @@
 # hosts/nuc-juno/hardware/default.nix
 #
 # Hardware configuration for nuc-juno
-{ configLib, pkgs, ... }:
+{ configLib, pkgs, lib, ... }:
 
 {
   imports = [
@@ -9,10 +9,16 @@
     ./boot.nix
     ./disks
     ./filesystems.nix
+    ./network.nix
 
     # Hardware modules
     (configLib.moduleImport "hardware/hw-cpu-intel.nix")
   ];
+
+  # Set the primary interface name as a module argument with high priority
+  _module.args = {
+    primaryInterface = lib.mkForce "enp1s0";
+  };
 
   # Intel QuickSync for hardware acceleration - using hardware.graphics
   hardware.graphics = {
@@ -26,34 +32,11 @@
     ];
   };
 
-  # Network configuration
+  # Basic host network configuration
   networking = {
     hostName = "nuc-juno";
     hostId = "cafef00e"; # Required for ZFS
-    useDHCP = true; # Enable DHCP for global configuration
-
-    # Enable both IPv4 and IPv6
-    enableIPv6 = true;
-
-    # Enable DHCP specifically for eth0 interface
-    interfaces.eth0 = {
-      useDHCP = true;
-    };
-
-    # Remove static IP configuration as it's now handled by DHCP with router static assignment
-    # The router has static DHCP entries for this host
-
-    # Add host entries for the homelab
-    hosts = {
-      "10.32.40.41" = [ "nuc-luna" ];
-      "10.32.40.42" = [ "nuc-titan" ];
-      "10.32.40.43" = [ "nuc-juno" ];
-      "10.32.40.45" = [ "minio-vip" ];
-    };
   };
-
-  # Time synchronization
-  services.chrony.enable = true;
 
   # System hardware tweaks
   hardware = {

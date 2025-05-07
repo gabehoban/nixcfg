@@ -74,16 +74,8 @@
   # ───────────────────────────────────────────
   # Network Configuration
   # ───────────────────────────────────────────
-  # Enable DHCP by default on all interfaces
-  # NetworkManager will manage specific interface configuration
-  networking.useDHCP = lib.mkDefault true;
-
-  # Previous interfaces kept as reference for future network configs
-  # These are commented out as NetworkManager handles them dynamically
-  # networking.interfaces.docker0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.virbr0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.ztwfukvlow.useDHCP = lib.mkDefault true;
+  # We rely on systemd-networkd for specific interface configuration
+  # Global useDHCP is set to false in the network module
 
   # ───────────────────────────────────────────
   # CPU Configuration

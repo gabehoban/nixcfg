@@ -18,9 +18,6 @@
     group = "minio";
   };
 
-  # Required kernel modules for VRRP
-  boot.kernelModules = [ "ip_vs" ];
-
   services.minio = {
     enable = true;
 
@@ -33,29 +30,6 @@
 
     # Data configuration - will be set per-host
     dataDir = [ ];
-  };
-
-  services.keepalived = {
-    enable = true;
-    vrrpInstances = {
-      "minio-vip" = {
-        # Different priority for each node (higher is preferred)
-        priority = lib.mkDefault 100;
-
-        # Interface to bind the VIP to
-        interface = "eth0";
-
-        # Virtual router ID (must be the same across all nodes in the cluster)
-        virtualRouterId = 42;
-
-        # VIP address configuration
-        virtualIps = [
-          {
-            addr = "10.32.40.45/24";
-          }
-        ];
-      };
-    };
   };
 
   # Configure nginx for MinIO
@@ -97,18 +71,7 @@
       9000
       9001
     ];
-
-    # Allow VRRP protocol for keepalived
-    extraCommands = ''
-      # Allow VRRP protocol (necessary for keepalived)
-      iptables -A INPUT -p vrrp -j ACCEPT
-      ip6tables -A INPUT -p vrrp -j ACCEPT
-    '';
   };
-
-  # Ensure proper service ordering
-  systemd.services.minio.after = [ "keepalived.service" ];
-  systemd.services.minio.wants = [ "keepalived.service" ];
 
   # For distributed mode, hosts need to be able to communicate
   networking.hosts = {

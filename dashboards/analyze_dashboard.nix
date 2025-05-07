@@ -1,4 +1,6 @@
-{ pkgs ? import <nixpkgs> {} }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
 pkgs.writeScriptBin "analyze-dashboard" ''
   #!${pkgs.stdenv.shell}

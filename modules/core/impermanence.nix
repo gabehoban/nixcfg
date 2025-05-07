@@ -28,20 +28,20 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = lib.mdDoc "Enable impermanence for ephemeral state management";
+      description = "Enable impermanence for ephemeral state management";
     };
 
     # System-level directories
     directories = lib.mkOption {
       default = [ ];
-      description = lib.mdDoc "List of system directories to make persistent";
+      description = "List of system directories to make persistent";
     };
 
     # System-level files
     files = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc "List of system files to make persistent";
+      description = "List of system files to make persistent";
     };
 
     # User-specific configuration
@@ -56,29 +56,29 @@ in
                     options = {
                       directory = lib.mkOption {
                         type = lib.types.str;
-                        description = lib.mdDoc "Path to directory";
+                        description = "Path to directory";
                       };
                       mode = lib.mkOption {
                         type = lib.types.str;
-                        description = lib.mdDoc "Permissions mode";
+                        description = "Permissions mode";
                       };
                     };
                   }
                 )
               );
               default = [ ];
-              description = lib.mdDoc "User directories to make persistent";
+              description = "User directories to make persistent";
             };
             files = lib.mkOption {
               type = lib.types.listOf lib.types.str;
               default = [ ];
-              description = lib.mdDoc "User files to make persistent";
+              description = "User files to make persistent";
             };
           };
         }
       );
       default = { };
-      description = lib.mdDoc "Per-user persistence configuration";
+      description = "Per-user persistence configuration";
     };
   };
 

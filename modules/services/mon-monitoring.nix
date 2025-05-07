@@ -2,10 +2,11 @@
 #
 # Centralized monitoring setup with Prometheus and Grafana
 # Configured for scraping metrics from homelab hosts
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 {
   imports = [ ./web-nginx.nix ];
@@ -516,7 +517,10 @@
   systemd.services.grafana-dashboards = {
     description = "Add default Grafana dashboards";
     wantedBy = [ "multi-user.target" ];
-    after = [ "grafana.service" "network-online.target" ];
+    after = [
+      "grafana.service"
+      "network-online.target"
+    ];
     requires = [ "grafana.service" ];
     serviceConfig = {
       Type = "oneshot";

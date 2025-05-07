@@ -11,6 +11,4 @@ _: {
       "http://10.32.40.43:9000/minio/data"
     ];
   };
-  # Configure as primary Keepalived node
-  services.keepalived.vrrpInstances."minio-vip".priority = 200;
 }
