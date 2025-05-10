@@ -34,6 +34,16 @@
               noTLSVerify = false;
             };
           };
+
+          # Expose FreshRSS feed reader
+          "freshrss.labrats.cc" = {
+            service = "http://localhost:80";
+            originRequest = {
+              originServerName = "freshrss.labrats.cc";
+              connectTimeout = "30s";
+              noTLSVerify = false;
+            };
+          };
         };
       };
     };

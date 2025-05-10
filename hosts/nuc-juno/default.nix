@@ -21,6 +21,9 @@
     (configLib.moduleImport "services/media-recyclarr.nix")
     # Monitoring
     (configLib.moduleImport "services/mon-node-exporter.nix")
+    # Web services
+    (configLib.moduleImport "services/web-freshrss.nix")
+    (configLib.moduleImport "services/web-cloudflared.nix")
 
     # Host-specific service configurations
     ./config-minio.nix
