@@ -16,6 +16,7 @@
     (configLib.moduleImport "services/storage-attic.nix")
     (configLib.moduleImport "services/web-cloudflared.nix")
     (configLib.moduleImport "services/dev-github-runner.nix")
+    (configLib.moduleImport "services/dev-forgejo.nix")
     (configLib.moduleImport "services/mon-monitoring.nix")
   ];
 

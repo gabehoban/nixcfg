@@ -115,11 +115,8 @@ in
     # Use mkForce to override default settings from NetworkManager
     useDHCP = lib.mkForce true;
 
-    # Set fallback nameservers (should be provided by DHCP in most cases)
-    nameservers = [
-      "1.1.1.1"
-      "8.8.8.8"
-    ];
+    # Don't set fallback nameservers - use only router-provided DNS
+    nameservers = [ ];
 
     # Enable IPv6 globally
     enableIPv6 = lib.mkForce true;
@@ -157,6 +154,7 @@ in
       enable = true;
       dnssec = "allow-downgrade"; # Better security with fallback
       llmnr = "true"; # Enable Link-Local Multicast Name Resolution for local discovery
+      fallbackDns = []; # Explicitly disable fallback DNS servers
     };
 
     # Standardized time synchronization with chrony
